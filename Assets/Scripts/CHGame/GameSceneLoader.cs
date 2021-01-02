@@ -3,14 +3,12 @@
     using UnityEngine;
     using UnityEngine.SceneManagement;
 
-    /// <summary>
-    /// Simple class encapsulating load scene method.
-    /// </summary>
     public class GameSceneLoader : MonoBehaviour
 	{
-	    public void LoadScene(string a_nextScene)
+		//Load a different scence by name
+	    public void LoadScene(string nextSceneName)
 	    {
-	        SceneManager.LoadScene(a_nextScene);
+	        SceneManager.LoadScene(nextSceneName);
 	    }
 	}
 }
