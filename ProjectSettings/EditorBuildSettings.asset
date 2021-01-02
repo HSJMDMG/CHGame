@@ -11,4 +11,22 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/CHGame/Scences/CHGameCredits.unity
     guid: e9542909b567245eba1f798e0afbb347
+  - enabled: 1
+    path: Assets/CHGame/Scences/P1Mode/P1Menu.unity
+    guid: 0966a0b84fceb4e8d9f14e866bdff961
+  - enabled: 1
+    path: Assets/CHGame/Scences/P1Mode/P1Background.unity
+    guid: 30df8f54c7634466f89cb6e968a66e64
+  - enabled: 1
+    path: Assets/CHGame/Scences/P1Mode/P1Controls.unity
+    guid: 2453d67034e7b44a98a287b7c15e85e9
+  - enabled: 1
+    path: Assets/CHGame/Scences/P2Mode/P2Menu.unity
+    guid: 69916466a34074f20a07810bcf2d2dd4
+  - enabled: 1
+    path: Assets/CHGame/Scences/P2Mode/P2Background.unity
+    guid: c6441b8e0d50d493f969ea200de8bb26
+  - enabled: 1
+    path: Assets/CHGame/Scences/P2Mode/P2Controls.unity
+    guid: bb9f3d6c7abbd4fd7923b899d015d74e
   m_configObjects: {}
