@@ -165,19 +165,19 @@ MonoBehaviour:
     m_SelectedTrigger: Highlighted
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 8449920575162633577}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
-        m_MethodName: LoadScene
-        m_Mode: 5
+        m_MethodName: 
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgumentAssemblyTypeName: 
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: <some scence>
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 1
 --- !u!114 &7754319981392122202
@@ -189,7 +189,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 135086}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7376f8f2cd05c4fb09ee51672e6db373, type: 3}
+  m_Script: {fileID: 11500000, guid: f48df79832aa2bb49b34d154192e59ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &8449920575162633577
