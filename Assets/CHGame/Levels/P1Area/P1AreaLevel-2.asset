@@ -10,10 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0e053cbe6b0b14b8d8d6c766f82c15c7, type: 3}
-  m_Name: P1AreaLevel-1
+  m_Name: P1AreaLevel-2
   m_EditorClassIdentifier: 
   Points:
-  - {x: 0, y: 0}
+  - {x: 1, y: 2}
   - {x: 2, y: 2}
-  - {x: 0, y: 2}
-  - {x: 2, y: 0}
+  - {x: 2, y: 1}
