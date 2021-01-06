@@ -757,7 +757,7 @@ MonoBehaviour:
     type: 3}
   m_advanceButton: {fileID: 898303267}
   m_levels:
-  - {fileID: 11400000, guid: ea3bc30c9e21c46a19c22dec5b404c49, type: 2}
+  - {fileID: 3002621613220139105, guid: 919b1ec99aa29408dbdc29ec4875fa64, type: 3}
   - {fileID: 11400000, guid: c269ca32766da4df9a934f3e0decfe9a, type: 2}
   m_victoryScene: P1Victory
 --- !u!1001 &1093176446
