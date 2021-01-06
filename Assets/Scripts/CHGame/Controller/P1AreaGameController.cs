@@ -27,17 +27,22 @@ namespace CHGame
         [SerializeField]
         private string m_victoryScene;
 
-        internal P1HullPoint m_firstPoint;
-        internal P1HullPoint m_secondPoint;
-        internal bool m_locked;
+
+        internal bool m_pointSelection;
 
         private List<P1HullPoint> m_points;
         private HashSet<LineSegment> m_segments;
         private Polygon2D m_solutionHull;
 
+        private List<P1HullPoint> m_selected_points;
+        private Polygon2D m_selected_Hull;
+        private List<double> m_rateList;
+
         private List<GameObject> instantObjects;
 
+
         protected int m_levelCounter = 0;
+
 
         void Start()
         {
@@ -46,31 +51,27 @@ namespace CHGame
             m_segments = new HashSet<LineSegment>();
             instantObjects = new List<GameObject>();
 
+            m_selected_points = new List<P1HullPoint>();
+            m_rateList = new List<double>();
+
+            double [] rating_percent = { 0.6, 0.8, 0.95, 1.0 };
+
+
+            m_rateList.AddRange(rating_percent);
+
             InitLevel();
         }
 
         void Update()
         {
-            if (m_locked && !Input.GetMouseButton(0))
-            {
-                // create road
-                AddSegment(m_firstPoint, m_secondPoint);
-            }
-            else if (Input.GetMouseButton(0))
+
+            if (m_pointSelection && Input.GetMouseButton(0))
             {
                 // update road endpoint
                 var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition + 10 * Vector3.forward);
                 m_line.SetPosition(1, pos);
             }
 
-            // clear road creation variables
-            if ((m_locked && !Input.GetMouseButton(0)) || Input.GetMouseButtonUp(0))
-            {
-                m_locked = false;
-                m_firstPoint = null;
-                m_secondPoint = null;
-                m_line.enabled = false;
-            }
         }
 
         public void InitLevel()
@@ -108,6 +109,7 @@ namespace CHGame
             InitLevel();
         }
 
+
         public void AddSegment(P1HullPoint a_point1, P1HullPoint a_point2)
         {
             var segment = new LineSegment(a_point1.Pos, a_point2.Pos);
@@ -140,24 +142,39 @@ namespace CHGame
 
         public void CheckSolution()
         {
-            if (CheckHull())
-            {
-                m_advanceButton.Enable();
+            var stars = HullRate();
+            if (stars == 0) {
+              m_advanceButton.Disable();
+              return;
             }
-            else
-            {
-                m_advanceButton.Disable();
-            }
-        }
+            m_advanceButton.Enable();
+            //TODO: add solution rating information (both UI/Scence) (show a text, make life easier)
 
-        private bool CheckHull()
+
+          }
+
+        private int HullRate()
         {
-            // quick return counts not equal
-            if (m_solutionHull.Segments.Count != m_segments.Count)
-                return false;
 
-            return m_solutionHull.Segments.All(seg => m_segments.Contains(seg) ||
-                        m_segments.Contains(new LineSegment(seg.Point2, seg.Point1)));  // also check reverse
+            // 60%, 80%, 95% pass level
+            m_selected_Hull = ConvexHull.ComputeConvexHull(m_selected_points.Select(v => v.Pos));
+
+            for (int i = 0; i < m_rateList.Count; i++) {
+              if (m_selected_Hull.Area < m_rateList[i] * m_solutionHull.Area) {
+                return i;
+              }
+            }
+
+            return m_rateList.Count - 1;
+
+
+
+
+            //if (m_solutionHull.Segments.Count != m_segments.Count)
+             //   return false;
+
+          //  return m_solutionHull.Segments.All(seg => m_segments.Contains(seg) ||
+          //              m_segments.Contains(new LineSegment(seg.Point2, seg.Point1)));  // also check reverse
         }
 
 
@@ -167,8 +184,12 @@ namespace CHGame
         private void Clear()
         {
             m_solutionHull = null;
+            m_selected_Hull = null;
+
             m_points.Clear();
             m_segments.Clear();
+            m_selected_points.Clear();
+            m_rateList.Clear();
 
             // destroy game objects created in level
             foreach (var obj in instantObjects)
