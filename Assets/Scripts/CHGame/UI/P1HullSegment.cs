@@ -17,7 +17,7 @@ namespace CHGame
         void OnMouseUpAsButton()
         {
             // destroy the road object
-            m_gameController.RemoveSegment(this);
+            //m_gameController.RemoveSegment(this);
             Destroy(gameObject);
         }
     }

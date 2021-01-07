@@ -28,13 +28,16 @@ namespace CHGame
         private string m_victoryScene;
 
 
-        internal bool m_pointSelection;
+        public bool m_pointSelection;
+        //internal bool m_pointSelection;
+        internal P1HullPoint m_current_point;
 
         private List<P1HullPoint> m_points;
         private HashSet<LineSegment> m_segments;
         private Polygon2D m_solutionHull;
 
-        private List<P1HullPoint> m_selected_points;
+        public List<P1HullPoint> m_selected_points;
+        //private List<P1HullPoint> m_selected_points;
         private Polygon2D m_selected_Hull;
         private List<double> m_rateList;
 
@@ -53,6 +56,7 @@ namespace CHGame
 
             m_selected_points = new List<P1HullPoint>();
             m_rateList = new List<double>();
+            m_pointSelection = false;
 
             double [] rating_percent = { 0.6, 0.8, 0.95, 1.0 };
 
@@ -67,9 +71,37 @@ namespace CHGame
 
             if (m_pointSelection && Input.GetMouseButton(0))
             {
-                // update road endpoint
-                var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition + 10 * Vector3.forward);
-                m_line.SetPosition(1, pos);
+              if (m_current_point.selected) {
+                //change sprite
+                m_current_point.selected = false;
+                //remove the point from selected point list
+                if (m_selected_points.Contains(m_current_point))
+                {
+                  m_selected_points.Remove(m_current_point);
+                  }
+                //TODO:redraw convex hull with lines (also filled with color/pics)
+
+                //update the ConvexHull
+                //CheckSolution();
+
+                m_pointSelection = false;
+              }
+              else
+              {
+                //change sprite
+                m_current_point.selected = true;
+                //add the point into selected pointlist
+                if (! m_selected_points.Contains(m_current_point))
+                {
+                  m_selected_points.Add(m_current_point);
+                }
+
+
+                //TODO:redraw convex hull with lines (also filled with color/pics)
+                //update convexhull
+                //CheckSolution();
+                m_pointSelection = false;
+              }
             }
 
         }
@@ -109,36 +141,6 @@ namespace CHGame
             InitLevel();
         }
 
-
-        public void AddSegment(P1HullPoint a_point1, P1HullPoint a_point2)
-        {
-            var segment = new LineSegment(a_point1.Pos, a_point2.Pos);
-
-            // dont add double segments
-            if (m_segments.Contains(segment) || m_segments.Contains(new LineSegment(a_point2.Pos, a_point1.Pos)))
-                // also check reverse
-                return;
-
-            m_segments.Add(segment);
-
-            // instantiate new road mesh
-            var roadmesh = Instantiate(m_roadMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
-            roadmesh.transform.parent = this.transform;
-            instantObjects.Add(roadmesh);
-
-            roadmesh.GetComponent<P1HullSegment>().Segment = segment;
-
-            var roadmeshScript = roadmesh.GetComponent<ReshapingMesh>();
-            roadmeshScript.CreateNewMesh(a_point1.transform.position, a_point2.transform.position);
-
-            CheckSolution();
-        }
-
-        public void RemoveSegment(P1HullSegment a_segment)
-        {
-            m_segments.Remove(a_segment.Segment);
-            CheckSolution();
-        }
 
         public void CheckSolution()
         {
