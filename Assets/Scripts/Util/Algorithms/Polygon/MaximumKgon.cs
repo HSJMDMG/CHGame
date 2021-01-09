@@ -33,6 +33,13 @@ namespace Util.Algorithms.Polygon
             float[,,] f = new float [vertices.Count, vertices.Count, pointLimit];
             int[,,] g = new int [vertices.Count, vertices.Count, pointLimit];
 
+            for (var i = 0; i < vertices.Count; i++) {
+              for (var j = 0; j < vertices.Count; j++) {
+                for (var k = 0; k < pointLimit; k++) {
+                  f[i,j,k] = 0f;
+                }
+              }
+            }
 
             for (var plimit = 3; plimit <= pointLimit; plimit++)
             {
@@ -81,6 +88,7 @@ namespace Util.Algorithms.Polygon
                 }
             }
 
+
             Polygon2D m_optimalSolution = new Polygon2D();
             m_optimalSolution.AddVertex(vertices[optStart]);
             m_optimalSolution.AddVertex(vertices[optEnd]);
@@ -100,7 +108,9 @@ namespace Util.Algorithms.Polygon
 
         public static float TriangleArea(Vector2 p1, Vector2 p2, Vector2 p3)
         {
-            return (0.5f * (p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y)));
+            //float ans = 0.5f * (p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y));
+            //if (ans < 0) {Debug.Log("Less than 0!!!!!");}
+            return Mathf.Abs(0.5f * (p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y)));
         }
 
     }
