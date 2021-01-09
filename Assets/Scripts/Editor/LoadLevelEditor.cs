@@ -23,7 +23,7 @@ public class LoadLevelEditor : ScriptedImporter
 
     /// <summary>
     /// Defines a custom method for importing .ipe files into unity.
-    /// Currently used for importing levels into 
+    /// Currently used for importing levels into
     /// </summary>
     /// <param name="ctx"></param>
     public override void OnImportAsset(AssetImportContext ctx)
@@ -46,10 +46,14 @@ public class LoadLevelEditor : ScriptedImporter
         else if (name.StartsWith("divLevel"))
         {
             obj = LoadDivideLevel(fileSelected, name);
-        } 
+        }
         else if (name.StartsWith("hullLevel"))
         {
             obj = LoadHullLevel(fileSelected, name);
+        }
+        else if (name.StartsWith("P1AreaLevel"))
+        {
+            obj = LoadP1AreaLevel(fileSelected, name);
         }
         else
         {
@@ -322,6 +326,32 @@ public class LoadLevelEditor : ScriptedImporter
 
         return asset;
     }
+    private UnityEngine.Object LoadP1AreaLevel(XElement fileSelected, string name)
+    {
+        // create the output scriptable object
+        var asset = ScriptableObject.CreateInstance<P1AreaLevel>();
+
+        // retrieve page data from .ipe file
+        var items = fileSelected.Descendants("page").First().Descendants("use");
+
+        // get marker data into respective vector list
+        asset.Points.AddRange(GetMarkers(items, "disk"));
+
+        // normalize coordinates
+        var rect = BoundingBoxComputer.FromPoints(asset.Points);
+        asset.Points = Normalize(rect, ktSIZE, asset.Points);
+
+        // give warning if no relevant data found
+        if (asset.Points.Count == 0)
+        {
+            EditorUtility.DisplayDialog("Warning", "File does not contain any points.", "OK");
+        }
+
+        return asset;
+    }
+
+
+
 
     /// <summary>
     /// Retrieve a vector list for all markers elements with given name
