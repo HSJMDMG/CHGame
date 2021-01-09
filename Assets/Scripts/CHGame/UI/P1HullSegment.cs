@@ -14,11 +14,6 @@ namespace CHGame
             m_gameController = FindObjectOfType<P1AreaGameController>();
         }
 
-        void OnMouseUpAsButton()
-        {
-            // destroy the road object
-            //m_gameController.RemoveSegment(this);
-            Destroy(gameObject);
-        }
+
     }
 }

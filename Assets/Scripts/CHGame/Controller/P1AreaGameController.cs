@@ -17,7 +17,9 @@ namespace CHGame
         public LineRenderer m_line;
 
         [SerializeField]
-        private GameObject m_roadMeshPrefab;
+        private GameObject m_userLineMeshPrefab;
+        [SerializeField]
+        private GameObject m_hintLineMeshPrefab;
         [SerializeField]
         private GameObject m_pointPrefab;
         [SerializeField]
@@ -27,10 +29,12 @@ namespace CHGame
         private List<P1AreaLevel> m_levels;
         [SerializeField]
         private string m_victoryScene;
+        [SerializeField]
+        private int m_pointNumberLimit;
 
 
-        public bool m_pointSelection;
-        //internal bool m_pointSelection;
+        //private bool m_pointSelection;
+        internal bool m_pointSelection;
         internal P1HullPoint m_current_point;
 
         private List<P1HullPoint> m_points;
@@ -38,11 +42,15 @@ namespace CHGame
         private Polygon2D m_solutionHull;
 
 
+
+        private List<float> m_rateList;
+        [SerializeField]
         private List<P1HullPoint> m_selected_points;
         //private Polygon2D m_selected_Hull;
         public Polygon2D m_selected_Hull;
-        private List<float> m_rateList;
+        public List<GameObject> hintMeshes;
         public List<GameObject> lineMeshes;
+
 
         private List<GameObject> instantObjects;
 
@@ -79,11 +87,7 @@ namespace CHGame
                 if (m_selected_points.Contains(m_current_point))
                 {
                   m_selected_points.Remove(m_current_point);
-                  }
-                  //TODO:redraw convex hull with lines (also filled with color/pics)
-
-                  //update the ConvexHull
-                  //CheckSolution();
+                }
 
                 m_pointSelection = false;
               }
@@ -96,16 +100,22 @@ namespace CHGame
                 {
                   m_selected_points.Add(m_current_point);
                 }
-
-
-                //TODO:redraw convex hull with lines (also filled with color/pics)
-                //update convexhull
-                //CheckSolution();
                 m_pointSelection = false;
               }
+
+
               if (m_selected_points.Count >=3 )
               {
                 CheckSolution();
+              }
+              else
+              {
+                //delete user lines
+                foreach (var segmesh in lineMeshes)
+                {
+                    Destroy(segmesh);
+                }
+                lineMeshes.Clear();
               }
             }
 
@@ -133,8 +143,46 @@ namespace CHGame
             //Make vertex list
             m_points = FindObjectsOfType<P1HullPoint>().ToList();
 
-            // compute convex hull
-            m_solutionHull = ConvexHull.ComputeConvexHull(m_points.Select(v => v.Pos));
+
+            // set maximum number of selected m_points
+            var convexhulltemp = ConvexHull.ComputeConvexHull(m_points.Select(v => v.Pos));
+            //m_pointNumberLimit = Random.Range(3, convexhulltemp.VertexCount + 1);
+            m_pointNumberLimit = 3;
+
+            // compute maximum k-gon (Area)
+            if (m_pointNumberLimit >= convexhulltemp.VertexCount)
+            {
+              m_solutionHull = convexhulltemp;
+            }
+            else
+            {
+              m_solutionHull = MaximumKgon.ComputeMaximumAreaKgon(m_points.Select(v => v.Pos), m_pointNumberLimit);
+            }
+
+
+
+            //TODO: deal with maximum (point number)
+
+
+            //TODO: Hind hint and add button to show hint
+            foreach (var seg in m_solutionHull.Segments)
+            {
+
+              //Add a line renderer
+              // instantiate new road mesh
+              var hintmesh = Instantiate(m_hintLineMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
+              hintmesh.transform.parent = this.transform;
+              instantObjects.Add(hintmesh);
+              hintMeshes.Add(hintmesh);
+
+              hintmesh.GetComponent<P1HullSegment>().Segment =seg;
+
+              var hintmeshScript = hintmesh.GetComponent<ReshapingMesh>();
+              hintmeshScript.CreateNewMesh(seg.Point1, seg.Point2);
+            }
+
+
+
             //set stars information
             m_rateList = new List<float>() { 0.6f, 0.8f, 0.95f, 1.0f };
             //Debug.Log(m_solutionHull);
@@ -145,6 +193,7 @@ namespace CHGame
               var starArea = m_rateList[i - 1] * m_solutionHull.Area;
               GameObject.Find(objName).GetComponent<Text>().text = starArea.ToString();
             }
+
 
 
             m_advanceButton.Disable();
@@ -186,24 +235,25 @@ namespace CHGame
               return 0;
             }
 
-            Debug.Log(m_selected_Hull.Segments.Count);
+            //Debug.Log(m_selected_Hull.Segments.Count);
 
             //Draw new convex hull line segments.
             foreach (var segmesh in lineMeshes)
             {
                 Destroy(segmesh);
             }
+            lineMeshes.Clear();
             foreach (var seg in m_selected_Hull.Segments)
             {
 
               //Add a line renderer
               // instantiate new road mesh
-              var roadmesh = Instantiate(m_roadMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
+              var roadmesh = Instantiate(m_userLineMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
               roadmesh.transform.parent = this.transform;
               instantObjects.Add(roadmesh);
               lineMeshes.Add(roadmesh);
 
-              roadmesh.GetComponent<P1HullSegment>().Segment =seg;
+              //roadmesh.GetComponent<P1HullSegment>().Segment =seg;
 
               var roadmeshScript = roadmesh.GetComponent<ReshapingMesh>();
               roadmeshScript.CreateNewMesh(seg.Point1, seg.Point2);
@@ -253,7 +303,7 @@ namespace CHGame
          public LineRenderer m_line;
 
          [SerializeField]
-         private GameObject m_roadMeshPrefab;
+         private GameObject m_userLineMeshPrefab;
          [SerializeField]
          private ButtonContainer m_advanceButton;
 
@@ -314,7 +364,7 @@ namespace CHGame
              m_segments.Add(segment);
 
              // instantiate new road mesh
-             var roadmesh = Instantiate(m_roadMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
+             var roadmesh = Instantiate(m_userLineMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
              roadmesh.transform.parent = this.transform;
 
              roadmesh.GetComponent<P1HullSegment>().Segment = segment;
