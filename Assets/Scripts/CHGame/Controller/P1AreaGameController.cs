@@ -36,10 +36,12 @@ namespace CHGame
         private HashSet<LineSegment> m_segments;
         private Polygon2D m_solutionHull;
 
-        public List<P1HullPoint> m_selected_points;
-        //private List<P1HullPoint> m_selected_points;
-        private Polygon2D m_selected_Hull;
+
+        private List<P1HullPoint> m_selected_points;
+        //private Polygon2D m_selected_Hull;
+        public Polygon2D m_selected_Hull;
         private List<double> m_rateList;
+        public List<GameObject> lineMeshes;
 
         private List<GameObject> instantObjects;
 
@@ -71,7 +73,8 @@ namespace CHGame
 
             if (m_pointSelection && Input.GetMouseButton(0))
             {
-              if (m_current_point.selected) {
+              if (m_current_point.selected)
+              {
                 //change sprite
                 m_current_point.selected = false;
                 //remove the point from selected point list
@@ -79,10 +82,10 @@ namespace CHGame
                 {
                   m_selected_points.Remove(m_current_point);
                   }
-                //TODO:redraw convex hull with lines (also filled with color/pics)
+                  //TODO:redraw convex hull with lines (also filled with color/pics)
 
-                //update the ConvexHull
-                //CheckSolution();
+                  //update the ConvexHull
+                  //CheckSolution();
 
                 m_pointSelection = false;
               }
@@ -101,6 +104,10 @@ namespace CHGame
                 //update convexhull
                 //CheckSolution();
                 m_pointSelection = false;
+              }
+              if (m_selected_points.Count >=3 )
+              {
+                CheckSolution();
               }
             }
 
@@ -158,9 +165,42 @@ namespace CHGame
         private int HullRate()
         {
 
-            // 60%, 80%, 95% pass level
             m_selected_Hull = ConvexHull.ComputeConvexHull(m_selected_points.Select(v => v.Pos));
 
+            if (m_selected_Hull.VertexCount < 3)
+            {
+              return 0;
+            }
+
+            Debug.Log(m_selected_Hull.Segments.Count);
+
+
+            //clear old segments, draw new segments.
+            //m_segments.Clear();
+            foreach (var segmesh in lineMeshes)
+            {
+                Destroy(segmesh);
+            }
+
+
+
+            foreach (var seg in m_selected_Hull.Segments)
+            {
+
+              //Add a line renderer
+              // instantiate new road mesh
+              var roadmesh = Instantiate(m_roadMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
+              roadmesh.transform.parent = this.transform;
+              instantObjects.Add(roadmesh);
+              lineMeshes.Add(roadmesh);
+
+              roadmesh.GetComponent<P1HullSegment>().Segment =seg;
+
+              var roadmeshScript = roadmesh.GetComponent<ReshapingMesh>();
+              roadmeshScript.CreateNewMesh(seg.Point1, seg.Point2);
+            }
+
+            // 60%, 80%, 95% pass level
             for (int i = 0; i < m_rateList.Count; i++) {
               if (m_selected_Hull.Area < m_rateList[i] * m_solutionHull.Area) {
                 return i;
@@ -168,15 +208,6 @@ namespace CHGame
             }
 
             return m_rateList.Count - 1;
-
-
-
-
-            //if (m_solutionHull.Segments.Count != m_segments.Count)
-             //   return false;
-
-          //  return m_solutionHull.Segments.All(seg => m_segments.Contains(seg) ||
-          //              m_segments.Contains(new LineSegment(seg.Point2, seg.Point1)));  // also check reverse
         }
 
 
