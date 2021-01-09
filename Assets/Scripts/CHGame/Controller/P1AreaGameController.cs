@@ -10,6 +10,7 @@ namespace CHGame
     using Util.Geometry;
     using General.Controller;
     using UnityEngine.SceneManagement;
+    using UnityEngine.UI;
 
    public class P1AreaGameController : MonoBehaviour, IController
     {
@@ -40,7 +41,7 @@ namespace CHGame
         private List<P1HullPoint> m_selected_points;
         //private Polygon2D m_selected_Hull;
         public Polygon2D m_selected_Hull;
-        private List<double> m_rateList;
+        private List<float> m_rateList;
         public List<GameObject> lineMeshes;
 
         private List<GameObject> instantObjects;
@@ -57,13 +58,10 @@ namespace CHGame
             instantObjects = new List<GameObject>();
 
             m_selected_points = new List<P1HullPoint>();
-            m_rateList = new List<double>();
+            m_rateList = new List<float>();
             m_pointSelection = false;
 
-            double [] rating_percent = { 0.6, 0.8, 0.95, 1.0 };
 
-
-            m_rateList.AddRange(rating_percent);
 
             InitLevel();
         }
@@ -137,6 +135,17 @@ namespace CHGame
 
             // compute convex hull
             m_solutionHull = ConvexHull.ComputeConvexHull(m_points.Select(v => v.Pos));
+            //set stars information
+            m_rateList = new List<float>() { 0.6f, 0.8f, 0.95f, 1.0f };
+            //Debug.Log(m_solutionHull);
+            Debug.Log(m_rateList.Count);
+            for (int i = 1; i < m_rateList.Count ; i++) {
+              var objName = "Star" + i;
+              Debug.Log(objName);
+              var starArea = m_rateList[i - 1] * m_solutionHull.Area;
+              GameObject.Find(objName).GetComponent<Text>().text = starArea.ToString();
+            }
+
 
             m_advanceButton.Disable();
         }
@@ -154,10 +163,15 @@ namespace CHGame
             var stars = HullRate();
             if (stars == 0) {
               m_advanceButton.Disable();
-              return;
             }
-            m_advanceButton.Enable();
+            else
+            {
+              m_advanceButton.Enable();
+            }
+
+
             //TODO: add solution rating information (both UI/Scence) (show a text, make life easier)
+
 
 
           }
@@ -174,16 +188,11 @@ namespace CHGame
 
             Debug.Log(m_selected_Hull.Segments.Count);
 
-
-            //clear old segments, draw new segments.
-            //m_segments.Clear();
+            //Draw new convex hull line segments.
             foreach (var segmesh in lineMeshes)
             {
                 Destroy(segmesh);
             }
-
-
-
             foreach (var seg in m_selected_Hull.Segments)
             {
 
@@ -199,6 +208,9 @@ namespace CHGame
               var roadmeshScript = roadmesh.GetComponent<ReshapingMesh>();
               roadmeshScript.CreateNewMesh(seg.Point1, seg.Point2);
             }
+
+            //Update current area in information panel
+            GameObject.Find("Area").GetComponent<Text>().text = m_selected_Hull.Area.ToString();
 
             // 60%, 80%, 95% pass level
             for (int i = 0; i < m_rateList.Count; i++) {
