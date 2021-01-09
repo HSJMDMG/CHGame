@@ -53,6 +53,7 @@ namespace CHGame
 
 
         private List<GameObject> instantObjects;
+        private GameObject m_hint;
 
 
         protected int m_levelCounter = 0;
@@ -67,7 +68,6 @@ namespace CHGame
 
             m_selected_points = new List<P1HullPoint>();
             m_rateList = new List<float>();
-            m_pointSelection = false;
 
 
 
@@ -87,20 +87,25 @@ namespace CHGame
                 if (m_selected_points.Contains(m_current_point))
                 {
                   m_selected_points.Remove(m_current_point);
+                  GameObject.Find("SelectedNumber").GetComponent<Text>().text = m_selected_points.Count.ToString();
                 }
 
                 m_pointSelection = false;
               }
               else
               {
-                //change sprite
-                m_current_point.selected = true;
-                //add the point into selected pointlist
-                if (! m_selected_points.Contains(m_current_point))
-                {
-                  m_selected_points.Add(m_current_point);
+                if (m_selected_points.Count <  m_pointNumberLimit) {
+                  //change sprite
+                  m_current_point.selected = true;
+                  //add the point into selected pointlist
+                  if (! m_selected_points.Contains(m_current_point))
+                  {
+                    m_selected_points.Add(m_current_point);
+                    GameObject.Find("SelectedNumber").GetComponent<Text>().text = m_selected_points.Count.ToString();
+                  }
+                  m_pointSelection = false;
+
                 }
-                m_pointSelection = false;
               }
 
 
@@ -123,6 +128,8 @@ namespace CHGame
 
         public void InitLevel()
         {
+
+
             if (m_levelCounter >= m_levels.Count)
             {
                 SceneManager.LoadScene(m_victoryScene);
@@ -140,14 +147,20 @@ namespace CHGame
                 instantObjects.Add(obj);
             }
 
+            m_pointSelection = false;
+
+
             //Make vertex list
             m_points = FindObjectsOfType<P1HullPoint>().ToList();
 
 
             // set maximum number of selected m_points
             var convexhulltemp = ConvexHull.ComputeConvexHull(m_points.Select(v => v.Pos));
-            //m_pointNumberLimit = Random.Range(3, convexhulltemp.VertexCount + 1);
-            m_pointNumberLimit = 3;
+            m_pointNumberLimit = Random.Range(3, convexhulltemp.VertexCount + 1);
+            // set selected number panel
+            GameObject.Find("MaximumNumber").GetComponent<Text>().text = m_pointNumberLimit.ToString();
+            GameObject.Find("SelectedNumber").GetComponent<Text>().text = "0";
+
 
             // compute maximum k-gon (Area)
             if (m_pointNumberLimit >= convexhulltemp.VertexCount)
@@ -160,18 +173,14 @@ namespace CHGame
             }
 
 
-
-            //TODO: deal with maximum (point number)
-
-
-            //TODO: Hind hint and add button to show hint
+            // set hint button
+            m_hint = GameObject.Find("OptimalSolution");
             foreach (var seg in m_solutionHull.Segments)
             {
-
               //Add a line renderer
               // instantiate new road mesh
               var hintmesh = Instantiate(m_hintLineMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
-              hintmesh.transform.parent = this.transform;
+              hintmesh.transform.parent = m_hint.transform;
               instantObjects.Add(hintmesh);
               hintMeshes.Add(hintmesh);
 
@@ -180,12 +189,11 @@ namespace CHGame
               var hintmeshScript = hintmesh.GetComponent<ReshapingMesh>();
               hintmeshScript.CreateNewMesh(seg.Point1, seg.Point2);
             }
-
-
+            m_hint.SetActive(false);
 
             //set stars information
+            GameObject.Find("Area").GetComponent<Text>().text = "0";
             m_rateList = new List<float>() { 0.6f, 0.8f, 0.95f, 1.0f };
-            //Debug.Log(m_solutionHull);
             Debug.Log(m_rateList.Count);
             for (int i = 1; i < m_rateList.Count ; i++) {
               var objName = "Star" + i;
@@ -206,6 +214,17 @@ namespace CHGame
             InitLevel();
         }
 
+        public void ShowHideHint()
+        {
+          if (m_hint.activeSelf)
+          {
+            m_hint.SetActive(false);
+          }
+          else
+          {
+            m_hint.SetActive(true);
+          }
+        }
 
         public void CheckSolution()
         {
