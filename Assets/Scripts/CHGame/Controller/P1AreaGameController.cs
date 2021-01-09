@@ -53,6 +53,7 @@ namespace CHGame
 
 
         private List<GameObject> instantObjects;
+        [SerializeField]
         private GameObject m_hint;
 
 
@@ -69,6 +70,7 @@ namespace CHGame
             m_selected_points = new List<P1HullPoint>();
             m_rateList = new List<float>();
 
+            m_hint = GameObject.Find("OptimalSolution");
 
 
             InitLevel();
@@ -156,7 +158,8 @@ namespace CHGame
 
             // set maximum number of selected m_points
             var convexhulltemp = ConvexHull.ComputeConvexHull(m_points.Select(v => v.Pos));
-            m_pointNumberLimit = Random.Range(3, convexhulltemp.VertexCount + 1);
+            //m_pointNumberLimit = Random.Range(3, convexhulltemp.VertexCount + 1);
+            m_pointNumberLimit = 4;
             // set selected number panel
             GameObject.Find("MaximumNumber").GetComponent<Text>().text = m_pointNumberLimit.ToString();
             GameObject.Find("SelectedNumber").GetComponent<Text>().text = "0";
@@ -174,11 +177,13 @@ namespace CHGame
 
 
             // set hint button
-            m_hint = GameObject.Find("OptimalSolution");
+
+            Debug.Log(m_hint);
             foreach (var seg in m_solutionHull.Segments)
             {
               //Add a line renderer
               // instantiate new road mesh
+
               var hintmesh = Instantiate(m_hintLineMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
               hintmesh.transform.parent = m_hint.transform;
               instantObjects.Add(hintmesh);
@@ -304,6 +309,9 @@ namespace CHGame
             m_segments.Clear();
             m_selected_points.Clear();
             m_rateList.Clear();
+
+            hintMeshes.Clear();
+            lineMeshes.Clear();
 
             // destroy game objects created in level
             foreach (var obj in instantObjects)
