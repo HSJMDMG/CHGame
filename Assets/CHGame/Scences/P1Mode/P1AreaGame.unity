@@ -1176,6 +1176,8 @@ MonoBehaviour:
   - {fileID: -3272911533318114548, guid: 9ef82b4b3e89c41f595b9ff508b0852b, type: 3}
   - {fileID: 3002621613220139105, guid: 919b1ec99aa29408dbdc29ec4875fa64, type: 3}
   - {fileID: 11400000, guid: c269ca32766da4df9a934f3e0decfe9a, type: 2}
+  - {fileID: 11400000, guid: c269ca32766da4df9a934f3e0decfe9a, type: 2}
+  - {fileID: 11400000, guid: c269ca32766da4df9a934f3e0decfe9a, type: 2}
   m_victoryScene: P1Victory
   m_pointNumberLimit: 0
   m_selected_points: []
@@ -1272,7 +1274,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 135086, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11418384, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1352,11 +1354,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22409496, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -291
+      value: -309
       objectReference: {fileID: 0}
     - target: {fileID: 22409496, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -160
+      value: 205
       objectReference: {fileID: 0}
     - target: {fileID: 22409496, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
       propertyPath: m_SizeDelta.x

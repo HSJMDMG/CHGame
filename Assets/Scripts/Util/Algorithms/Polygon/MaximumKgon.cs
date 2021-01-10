@@ -36,6 +36,8 @@ namespace Util.Algorithms.Polygon
 
             float[,,] f = new float [vertices.Count, vertices.Count, pointLimit];
             int[,,] g = new int [vertices.Count, vertices.Count, pointLimit];
+            Polygon2D[,,] h = new Polygon2D [vertices.Count, vertices.Count, pointLimit];
+
 
             for (var i = 0; i < vertices.Count; i++) {
               for (var j = 0; j < vertices.Count; j++) {
@@ -52,7 +54,33 @@ namespace Util.Algorithms.Polygon
               {
                 for (var oldEndPoint = startPoint + 1; oldEndPoint < vertices.Count; oldEndPoint++)
                 {
-                  for (var newEndPoint = oldEndPoint + 1; newEndPoint < vertices.Count; newEndPoint++) {
+                  for (var newEndPoint = oldEndPoint + 1; newEndPoint < vertices.Count; newEndPoint++)
+                  {
+                    Polygon2D newgon = new Polygon2D();
+                    if (plimit <= 3) {
+                      newgon.AddVertex(vertices[startPoint]);
+                      newgon.AddVertex(vertices[oldEndPoint]);
+                      }
+                    else
+                    {
+                        if (h[startPoint, oldEndPoint, limit - 1] == null) continue;
+                        foreach (var v in h[startPoint, oldEndPoint, limit - 1].Vertices)
+                          {
+                            newgon.AddVertex(v);
+                          }
+                    }
+
+                    newgon.AddVertex(vertices[newEndPoint]);
+                    newgon = ConvexHull.ComputeConvexHull(newgon);
+                    float tot = newgon.Area;
+
+                    if (tot >= f[startPoint, newEndPoint, limit])
+                    {
+                      f[startPoint, newEndPoint, limit] = tot;
+                      h[startPoint, newEndPoint, limit] = newgon;
+                    }
+
+                      /*
                       float total;
                       if (plimit == 3)
                       {
@@ -68,7 +96,7 @@ namespace Util.Algorithms.Polygon
                         f[startPoint, newEndPoint, limit] = total;
                         g[startPoint, newEndPoint, limit] = oldEndPoint;
                       }
-
+                      */
                   }
                 }
               }
@@ -93,6 +121,7 @@ namespace Util.Algorithms.Polygon
             }
 
 
+            /*
             Polygon2D m_optimalSolution = new Polygon2D();
             m_optimalSolution.AddVertex(vertices[optStart]);
             m_optimalSolution.AddVertex(vertices[optEnd]);
@@ -103,6 +132,8 @@ namespace Util.Algorithms.Polygon
               optEnd = g[optStart, optEnd, cnt];
             }
 
+            */
+           Polygon2D m_optimalSolution = h[optStart, optEnd, pointLimit - 3];
 
             return m_optimalSolution;
         }
@@ -161,12 +192,14 @@ namespace Util.Algorithms.Polygon
                   for (var newEndPoint = oldEndPoint + 1; newEndPoint < vertices.Count; newEndPoint++) {
 
                       Polygon2D newgon = new Polygon2D();
-                      if (plimit <= 3) {
+                      if (plimit <= 3) 
+                      {
                         newgon.AddVertex(vertices[startPoint]);
                         newgon.AddVertex(vertices[oldEndPoint]);
                         }
-                      else {
-
+                      else 
+                      {
+                        if (h[startPoint, oldEndPoint, limit - 1] == null) continue;
                         foreach (var v in h[startPoint, oldEndPoint, limit - 1].Vertices)
                         {
                           newgon.AddVertex(v);
