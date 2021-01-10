@@ -190,7 +190,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Area
+  m_Text: 3
 --- !u!222 &142013714
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -998,7 +998,7 @@ GameObject:
   - component: {fileID: 892204761}
   - component: {fileID: 892204760}
   m_Layer: 5
-  m_Name: Area
+  m_Name: PointsNumber
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1020,7 +1020,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 43.5, y: 0}
+  m_AnchoredPosition: {x: 69, y: 0}
   m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &892204760
@@ -1125,7 +1125,7 @@ GameObject:
   - component: {fileID: 980642450}
   - component: {fileID: 980642451}
   m_Layer: 0
-  m_Name: P1AreaGameScene
+  m_Name: P1PointGameScene
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1161,7 +1161,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 980642449}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3c8f2ac9a8df486590345a85c4f2739, type: 3}
+  m_Script: {fileID: 11500000, guid: 25653a508eb1949c39ff983cd031a69f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_line: {fileID: 486794694}
@@ -1173,9 +1173,8 @@ MonoBehaviour:
     type: 3}
   m_advanceButton: {fileID: 898303267}
   m_levels:
-  - {fileID: -3272911533318114548, guid: 9ef82b4b3e89c41f595b9ff508b0852b, type: 3}
-  - {fileID: 3002621613220139105, guid: 919b1ec99aa29408dbdc29ec4875fa64, type: 3}
-  - {fileID: 11400000, guid: c269ca32766da4df9a934f3e0decfe9a, type: 2}
+  - {fileID: -1632590923362679195, guid: 00b3de342ab334907aa89b0843f99bac, type: 3}
+  - {fileID: 7605123840274700284, guid: cb299df99d57841e6b7b04b34f6a4630, type: 3}
   m_victoryScene: P1Victory
   m_pointNumberLimit: 0
   m_selected_points: []
@@ -1717,7 +1716,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Area
+  m_Text: 3
 --- !u!222 &1251831428
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2000,7 +1999,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Area
+  m_Text: 3
 --- !u!222 &1576291601
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2286,13 +2285,14 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Current Area:
+  m_Text: 'Currently contains:      Points
 
     1-star needs:
 
     2-star needs:
 
-    3-star needs:'
+    3-star
+    needs:'
 --- !u!222 &1983667075
 CanvasRenderer:
   m_ObjectHideFlags: 0

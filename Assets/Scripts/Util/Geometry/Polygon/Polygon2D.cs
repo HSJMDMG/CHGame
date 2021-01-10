@@ -24,10 +24,14 @@
         private bool? m_simple;
         private bool? m_convex;
         private bool? m_clockwise;
+        private int m_pointNumber;
 
         public ICollection<Vector2> Vertices { get { return m_vertices; } }
 
         public int VertexCount { get { return m_vertices.Count; } }
+
+        public int PointNumber { get { return m_pointNumber;}}
+        public void SetPointNumber (int num) {m_pointNumber = num;}
 
         /// <summary>
         /// Computes the area spanned by this polygon
@@ -159,7 +163,7 @@
         }
 
         /// <summary>
-        /// Simple Constructor 
+        /// Simple Constructor
         /// </summary>
         public Polygon2D()
         {
@@ -189,7 +193,7 @@
                 throw new GeomException("Being convex is illdefined for polygons of 2 or less vertices");
             }
 
-            // flip orientation if polygon counter clockwise 
+            // flip orientation if polygon counter clockwise
             var dir = (IsClockwise() ? 1 : -1);
 
             for (var node = m_vertices.First; node != null; node = node.Next)
@@ -262,7 +266,7 @@
 
         public bool Contains(Vector2 pos)
         {
-            // ContainsInside(pos) || 
+            // ContainsInside(pos) ||
             return ContainsInside(pos) || ContainsVertex(pos) || OnBoundary(pos);
         }
 

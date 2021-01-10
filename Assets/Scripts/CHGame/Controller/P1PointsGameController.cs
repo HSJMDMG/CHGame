@@ -12,7 +12,7 @@ namespace CHGame
     using UnityEngine.SceneManagement;
     using UnityEngine.UI;
 
-   public class P1AreaGameController : MonoBehaviour, IController
+   public class P1PointsGameController : MonoBehaviour, IController
     {
         public LineRenderer m_line;
 
@@ -26,7 +26,7 @@ namespace CHGame
         private ButtonContainer m_advanceButton;
 
         [SerializeField]
-        private List<P1AreaLevel> m_levels;
+        private List<P1PtsLevel> m_levels;
         [SerializeField]
         private string m_victoryScene;
         [SerializeField]
@@ -156,11 +156,6 @@ namespace CHGame
               instantObjects.Add(obj);
             }
 
-            foreach (var point in m_levels[m_levelCounter].Points)
-            {
-
-
-            }
 
             m_pointSelection = false;
 
@@ -173,7 +168,8 @@ namespace CHGame
             var convexhulltemp = ConvexHull.ComputeConvexHull(m_points.Select(v => v.Pos));
             m_pointNumberLimit = Random.Range(3, convexhulltemp.VertexCount + 1);
             if (m_pointNumberLimit < 3) m_pointNumberLimit = 3;
-            
+
+
             // set selected number panel
             GameObject.Find("MaximumNumber").GetComponent<Text>().text = m_pointNumberLimit.ToString();
             GameObject.Find("SelectedNumber").GetComponent<Text>().text = "0";
@@ -183,16 +179,17 @@ namespace CHGame
             if (m_pointNumberLimit >= convexhulltemp.VertexCount)
             {
               m_solutionHull = convexhulltemp;
+              m_solutionHull.SetPointNumber(m_points.Count);
             }
             else
             {
-              m_solutionHull = MaximumKgon.ComputeMaximumAreaKgon(m_points.Select(v => v.Pos), m_pointNumberLimit);
+              m_solutionHull = MaximumKgon.ComputeMaximumPointsKgon(m_points.Select(v => v.Pos), m_pointNumberLimit);
             }
 
 
             // set hint button
 
-            Debug.Log(m_hint);
+            //Debug.Log(m_hint);
             foreach (var seg in m_solutionHull.Segments)
             {
               //Add a line renderer
@@ -211,14 +208,15 @@ namespace CHGame
             m_hint.SetActive(false);
 
             //set stars information
-            GameObject.Find("Area").GetComponent<Text>().text = "0";
+            GameObject.Find("PointsNumber").GetComponent<Text>().text = "0";
             m_rateList = new List<float>() { 0.6f, 0.8f, 0.95f, 1.0f };
-            Debug.Log(m_rateList.Count);
+            Debug.Log(m_solutionHull.PointNumber);
             for (int i = 1; i < m_rateList.Count ; i++) {
               var objName = "Star" + i;
-              Debug.Log(objName);
-              var starArea = m_rateList[i - 1] * m_solutionHull.Area;
-              GameObject.Find(objName).GetComponent<Text>().text = starArea.ToString();
+              //Debug.Log(objName);
+              var starNumber = (int)(m_rateList[i - 1] * m_solutionHull.PointNumber);
+              //if (starNumber < 3) {starNumber = 3;}
+              GameObject.Find(objName).GetComponent<Text>().text = starNumber.ToString();
             }
 
 
@@ -255,12 +253,6 @@ namespace CHGame
             {
               m_advanceButton.Enable();
             }
-
-
-            //TODO: add solution rating information (both UI/Scence) (show a text, make life easier)
-
-
-
           }
 
         private int HullRate()
@@ -273,7 +265,13 @@ namespace CHGame
               return 0;
             }
 
-            //Debug.Log(m_selected_Hull.Segments.Count);
+            int tot = m_selected_Hull.VertexCount;
+            foreach (var point in m_points) {
+              if (m_selected_Hull.ContainsInside(point.Pos)) {
+                tot++;
+              }
+            }
+            m_selected_Hull.SetPointNumber(tot);
 
             //Draw new convex hull line segments.
             foreach (var segmesh in lineMeshes)
@@ -298,11 +296,11 @@ namespace CHGame
             }
 
             //Update current area in information panel
-            GameObject.Find("Area").GetComponent<Text>().text = m_selected_Hull.Area.ToString();
+            GameObject.Find("PointsNumber").GetComponent<Text>().text = m_selected_Hull.PointNumber.ToString();
 
             // 60%, 80%, 95% pass level
             for (int i = 0; i < m_rateList.Count; i++) {
-              if (m_selected_Hull.Area < m_rateList[i] * m_solutionHull.Area) {
+              if (m_selected_Hull.PointNumber < (int)m_rateList[i] * m_solutionHull.Area) {
                 return i;
               }
             }

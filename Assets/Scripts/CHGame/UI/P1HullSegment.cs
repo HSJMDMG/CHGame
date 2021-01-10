@@ -7,11 +7,11 @@ namespace CHGame
     {
         public LineSegment Segment { get; set; }
 
-        private P1AreaGameController m_gameController;
+        //private P1AreaGameController m_gameController;
 
         void Awake()
         {
-            m_gameController = FindObjectOfType<P1AreaGameController>();
+            //m_gameController = FindObjectOfType<P1AreaGameController>();
         }
 
 
