@@ -3,7 +3,7 @@ namespace CHGame
     using UnityEngine;
     using Util.Geometry;
 
-    public class P1HullSegment : MonoBehaviour
+    public class P2Segment : MonoBehaviour
     {
         public LineSegment Segment { get; set; }
 

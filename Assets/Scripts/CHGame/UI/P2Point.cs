@@ -15,7 +15,7 @@ namespace CHGame
         private P2Controller m_controller;
 
 
-        void Awake()
+       /* void Awake()
         {
             Pos = new Vector2(transform.position.x, transform.position.y);
             m_controller = FindObjectOfType<P2Controller>();
@@ -23,24 +23,24 @@ namespace CHGame
             selected = false;
             spriteR = GetComponent<SpriteRenderer>();
         }
-
+        */
         void Update()
         {
 
-          if (selected)
+         /* if (selected)
           {
             spriteR.sprite = selectedPointSprite;
           }
           else
           {
             spriteR.sprite = originalPointSprite;
-          }
+          }*/
         }
 
         void OnMouseDown()
         {
 
-              m_controller.m_pointSelection = true;
+            //  m_controller.m_pointSelection = true;
 
         }
 
@@ -48,8 +48,8 @@ namespace CHGame
         {
 
 
-            m_controller.m_pointSelection = true;
-            m_controller.m_current_point = this;
+           // m_controller.m_pointSelection = true;
+           // m_controller.m_current_point = this;
 
 
 
@@ -61,7 +61,7 @@ namespace CHGame
         void OnMouseExit()
         {
 
-            m_controller.m_pointSelection = false;
+           // m_controller.m_pointSelection = false;
 
 
 
