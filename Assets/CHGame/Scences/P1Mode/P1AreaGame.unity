@@ -1176,6 +1176,7 @@ MonoBehaviour:
   - {fileID: -3272911533318114548, guid: 9ef82b4b3e89c41f595b9ff508b0852b, type: 3}
   - {fileID: 3002621613220139105, guid: 919b1ec99aa29408dbdc29ec4875fa64, type: 3}
   - {fileID: 11400000, guid: c269ca32766da4df9a934f3e0decfe9a, type: 2}
+  - {fileID: -7277180397894029069, guid: b63679310c9e0334d83c91c0ec028c35, type: 3}
   m_victoryScene: P1Victory
   m_pointNumberLimit: 0
   m_selected_points: []
