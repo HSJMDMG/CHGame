@@ -26,7 +26,13 @@ namespace Util.Algorithms.Polygon
         {
             var oldvertices = a_vertices.Distinct();
             var vertices = oldvertices.ToList();
-            vertices.Sort((x, y) => (x.x * y.y - x.y * y.x).CompareTo(0));
+            var x0 = vertices[0].x;
+            var y0 = vertices[0].y;
+            foreach (var vertex in vertices) {
+              if (vertex.x < x0) x0 = vertex.x;
+              if (vertex.y < y0) y0 = vertex.y;
+            }
+            vertices.Sort((x, y) => ((x.x - x0) * (y.y - y0) - (x.y - y0) * (y.x - x0)).CompareTo(0));
 
             float[,,] f = new float [vertices.Count, vertices.Count, pointLimit];
             int[,,] g = new int [vertices.Count, vertices.Count, pointLimit];
@@ -125,7 +131,13 @@ namespace Util.Algorithms.Polygon
         {
             var oldvertices = a_vertices.Distinct();
             var vertices = oldvertices.ToList();
-            vertices.Sort((x, y) => (x.x * y.y - x.y * y.x).CompareTo(0));
+            var x0 = vertices[0].x;
+            var y0 = vertices[0].y;
+            foreach (var vertex in vertices) {
+              if (vertex.x < x0) x0 = vertex.x;
+              if (vertex.y < y0) y0 = vertex.y;
+            }
+            vertices.Sort((x, y) => ((x.x - x0) * (y.y - y0) - (x.y - y0) * (y.x - x0)).CompareTo(0));
 
             int [,,] f = new int [vertices.Count, vertices.Count, pointLimit];
             int [,,] g = new int [vertices.Count, vertices.Count, pointLimit];
@@ -155,6 +167,8 @@ namespace Util.Algorithms.Polygon
                       {
                           total = f[startPoint, oldEndPoint, limit - 1] +  1 + TrianglePoints(vertices, startPoint, oldEndPoint, newEndPoint);
                       }
+
+                      Debug.Log("Total: "  + total);
 
                       if (total > f[startPoint, newEndPoint, limit])
                       {
@@ -195,10 +209,12 @@ namespace Util.Algorithms.Polygon
 
             for (var cnt = pointLimit - 3; cnt >= 0; cnt--)
             {
+              Debug.Log("ggggg:" + TrianglePoints(vertices, optStart, optEnd, g[optStart, optEnd, cnt]));
               m_optimalSolution.AddVertex(vertices[g[optStart, optEnd, cnt]]);
               optEnd = g[optStart, optEnd, cnt];
             }
 
+            Debug.Log("Optimal Vertices:  " + m_optimalSolution.Vertices);
 
             return m_optimalSolution;
         }
@@ -211,13 +227,18 @@ namespace Util.Algorithms.Polygon
           triangleABC.AddVertex(pts[Anum]);
           triangleABC.AddVertex(pts[Bnum]);
           triangleABC.AddVertex(pts[Cnum]);
-          for (int i = Anum + 1; i < Cnum; i++)
+
+          for (int i = 0; i < pts.Count; i++)
           {
-            if (i == Bnum) {continue;}
-            if (triangleABC.ContainsInside(pts[i]) || triangleABC.OnBoundary(pts[i])) {cnt++;}
+            if ((i == Bnum) || (i == Anum) || (i == Cnum)) {continue;}
+            if (triangleABC.ContainsInside(pts[i])) {cnt++;}
           }
-          Debug.Log(cnt);
+
+
+          //Debug.Log(cnt);
+          triangleABC.Clear();
           return cnt;
+
         }
 
 

@@ -172,6 +172,7 @@ namespace CHGame
             // set maximum number of selected m_points
             var convexhulltemp = ConvexHull.ComputeConvexHull(m_points.Select(v => v.Pos));
             m_pointNumberLimit = Random.Range(3, convexhulltemp.VertexCount + 1);
+            if (m_pointNumberLimit < 3) m_pointNumberLimit = 3;
             
             // set selected number panel
             GameObject.Find("MaximumNumber").GetComponent<Text>().text = m_pointNumberLimit.ToString();
