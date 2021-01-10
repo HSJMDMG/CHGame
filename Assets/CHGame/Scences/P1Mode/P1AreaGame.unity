@@ -1174,7 +1174,10 @@ MonoBehaviour:
   m_advanceButton: {fileID: 898303267}
   m_levels:
   - {fileID: 11400000, guid: c269ca32766da4df9a934f3e0decfe9a, type: 2}
-  - {fileID: -4339412003777711921, guid: 2a4d74093e6024b609ce3879123a2cfd, type: 3}
+
+  - {fileID: 11400000, guid: c269ca32766da4df9a934f3e0decfe9a, type: 2}
+  - {fileID: 11400000, guid: c269ca32766da4df9a934f3e0decfe9a, type: 2}
+
   m_victoryScene: P1Victory
   m_pointNumberLimit: 0
   m_selected_points: []

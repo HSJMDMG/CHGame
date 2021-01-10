@@ -35,4 +35,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/CHGame/Scences/P1Mode/P1Victory.unity
     guid: d4cb02593fd964aa28f5184cde1618ba
+  - enabled: 1
+    path: Assets/CHGame/Scences/P1Mode/P1PointsGame.unity
+    guid: 9486b664cad24420f9b7e2680938ebd6
   m_configObjects: {}

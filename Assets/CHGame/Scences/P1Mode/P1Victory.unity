@@ -548,7 +548,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11426352, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
       propertyPath: m_Text
-      value: Back(TO change)
+      value: Menu
       objectReference: {fileID: 0}
     - target: {fileID: 22409496, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
       propertyPath: m_LocalPosition.x
@@ -834,7 +834,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11497240, guid: 5bf2b46499c5a4b9490e088a2b964638, type: 3}
       propertyPath: m_Text
-      value: This is Victory Scene for 1-Player Mode
+      value: Congratulations! You Win!
       objectReference: {fileID: 0}
     - target: {fileID: 22485368, guid: 5bf2b46499c5a4b9490e088a2b964638, type: 3}
       propertyPath: m_LocalPosition.x
