@@ -17,26 +17,34 @@ namespace CHGame
     /// <summary>
     /// Game controller for the voronoi game.
     /// </summary>
-    public class P2Controller : MonoBehaviour
+    public class P2Controller : MonoBehaviour, IController
     {
-        // prefab instances for click objects
-        public GameObject m_Player1Prefab;
-        public GameObject m_Player2Prefab;
+
+        public bool isPlayer1Turn;
+
+
+
+        //To load data from ipe
+        [SerializeField]
+        private List<P1AreaLevel> m_levels;
+        protected int m_levelCounter = 0;
 
         // controller parameters
-        public bool m_withLookAtOnPlacement = true;
         public int m_turns;
 
         // names of differnt victory scenes
         public string m_p1Victory;
         public string m_p2Victory;
 
-        public VoronoiGUIManager m_GUIManager;
+        public P2GUIManager m_GUIManager;
         public MeshFilter m_meshFilter;
 
         // variables defining state of turns
-        private int m_halfTurnsTaken = 0;
-        private bool player1Turn = true;
+
+        [SerializeField]
+        private int m_maximumTurn;
+        private int m_turnCounter;
+        private bool player1Turn;
 
         private float[] m_playerArea;
 
@@ -44,7 +52,38 @@ namespace CHGame
         private FishManager m_fishManager;
         private Polygon2D m_meshRect;
 
-        // voronoi dcel
+        [SerializeField]
+        private List<P2Point> m_points;
+        //m_segments only contains coordinates;
+        private HashSet<P2Segment> m_segments;
+        private List<GameObject> instantObjects;
+        public List<GameObject> P1lineMeshes;
+        public List<GameObject> P2LineMeshes;
+
+
+        private List<P2Point> m_selected_points;
+        private List<P2Hull> m_selected_convexhulls;
+
+        internal bool m_pointSelection;
+        internal bool m_hullSelection;
+        internal P2Point m_current_point;
+        internal P2Hull m_current_hull;
+
+
+        public LineRenderer Player1LineMesh;
+        public LineRenderer Player2LineMesh;
+
+
+        private List<Verctor2> Player1Points;
+        private List<P2Hull> Player1Polygons;
+        private List<P2Segment> Player1Segements;
+
+
+        private List<Vector2> Player2Points;
+        private List<P2Hull> Player2Polygons;
+        private List<P2Segment> Player2Segements;
+
+        // dcel
         // calculated after every turn
         private DCEL m_DCEL;
 
@@ -58,56 +97,264 @@ namespace CHGame
             PLAYER2
         }
 
+
+
         // Use this for initialization
         public void Start()
         {
-            // create initial delaunay triangulation (three far-away points)
-            m_delaunay = Delaunay.Create();
 
-            // add auxiliary vertices as unowned
-            foreach (var vertex in m_delaunay.Vertices)
-            {
-                m_ownership.Add(vertex, EOwnership.UNOWNED);
-            }
+          m_points = new List<P2Point>();
+          m_segments = new HashSet<P2Segment>();
+          instantObjects = new List<GameObject>();
 
-            m_fishManager = new FishManager();
+          m_selected_points = new List<P2Point>();
+          m_rateList = new List<float>();
 
-            // create polygon of rectangle window for intersection with voronoi
-            float z = Vector2.Distance(m_meshFilter.transform.position, Camera.main.transform.position);
-            var bottomLeft = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, z));
-            var topRight = Camera.main.ViewportToWorldPoint(new Vector3(1, 1, z));
-            m_meshRect = new Polygon2D(
-                new List<Vector2>() {
-                    new Vector2(bottomLeft.x, bottomLeft.z),
-                    new Vector2(bottomLeft.x, topRight.z),
-                    new Vector2(topRight.x, topRight.z),
-                    new Vector2(topRight.x, bottomLeft.z)
-                });
+          //parameter for affine transformation
+          epsilon = 0.2f;
 
-            VoronoiDrawer.CreateLineMaterial();
+          //counter
+          m_maximumTurn = 10;
+          m_turnCounter = 0;
+          player1Turn = true;
+
+          InitLevel();
+
         }
 
         private void Update()
         {
-            if (Input.GetKeyDown("c"))
+
+            if (Input.GetKeyDown("t"))
             {
-                VoronoiDrawer.CircleOn = !VoronoiDrawer.CircleOn;
+                P2Drawer.EdgesOn = !P2Drawer.EdgesOn;
             }
 
-            if (Input.GetKeyDown("e"))
+            //add point listener
+            if (m_pointSelection && Input.GetMouseButton(0))
             {
-                VoronoiDrawer.EdgesOn = !VoronoiDrawer.EdgesOn;
+              if (m_current_point.selected)
+              {
+                //change sprite
+                m_current_point.selected = false;
+                //remove the point from selected point list
+                if (m_selected_points.Contains(m_current_point))
+                {
+                  m_selected_points.Remove(m_current_point);
+                }
+
+                m_pointSelection = false;
+              }
+              else
+              {
+                if (m_selected_points.Count <  2) {
+                  //change sprite
+                  m_current_point.selected = true;
+                  m_current_point.belongToPlayer1 = player1Turn;
+                  //add the point into selected pointlist
+                  if (! m_selected_points.Contains(m_current_point))
+                  {
+                    m_selected_points.Add(m_current_point);
+                  }
+                  m_pointSelection = false;
+                }
+              }
+
+            }
+            //  else
+
+            // add polygon listener
+            if (m_hullSelection && Input.GetMouseButton(0))
+            {
+              if (m_current_hull.selected)
+              {
+                //change hull mesh
+                m_current_hull.selected = false;
+                //remove the point from selected point list
+                if (m_selected_hull.Contains(m_current_hull))
+                {
+                  m_selected_hull.Remove(m_current_hull);
+                }
+
+                m_hullSelection = false;
+              }
+              else
+              {
+                if (m_selected_hulls.Count <  2) {
+                  if ((m_current_hull.belongToPlayer1 == Player1Turn) && (m_current_hull.canMerge)) {
+                    //change sprite
+                    m_current_hull.selected = true;
+                    //add the point into selected pointlist
+                    if (! m_selected_hulls.Contains(m_current_hull))
+                    {
+                      m_selected_hulls.Add(m_current_hull);
+                    }
+                    m_hullSelection = false;
+
+                  }
+                }
+              }
+
             }
 
-            if (Input.GetKeyDown("v"))
-            {
-                VoronoiDrawer.VoronoiOn = !VoronoiDrawer.VoronoiOn;
+        }
+
+        public void InitLevel()
+        {
+            //import data points from ipe
+            // clear old level
+            Clear();
+
+            // initialize settlements
+            for (var i = 0; i < m_levels[m_levelCounter].Points.Count; i++)  {
+
+              m_levels[m_levelCounter].Points[i] += new Vector2(epsilon * (Random.Range(0f, 1f) - 0.5f), epsilon * (Random.Range(0f, 0.1f)));
+
+              var point = m_levels[m_levelCounter].Points[i];
+
+              var obj = Instantiate(m_pointPrefab, point, Quaternion.identity) as GameObject;
+              obj.transform.parent = GameObject.Find("PointCollection").transform;
+              instantObjects.Add(obj);
+
             }
 
-            if (Input.GetMouseButtonDown(0))
+            m_pointSelection = false;
+
+            //Make vertex list
+            m_points = FindObjectsOfType<P2Point>().ToList();
+        }
+
+
+        public void showTrapezoidMap()
+        {
+          // show/hide trapezoid map
+          P2Drawer.EdgesOn = !P2Drawer.EdgesOn;
+        }
+
+        /// <summary>
+        /// Process next turn
+        /// </summary>
+        public void NextTurn()
+        {
+          m_turnCounter++;
+          player1Turn = !Player1Turn;
+
+          //load victory scene
+          if (m_turnCounter > m_maximumTurn)
+          {
+            if (m_playerArea[0] > m_playerArea[1])
             {
-                ProcessTurn();
+                SceneManager.LoadScene(m_p1Victory);
             }
+            else
+            {
+                SceneManager.LoadScene(m_p2Victory);
+            }
+          }
+          // load victory if screen clicked after every player has taken turn
+          else
+          {
+              // clean selected point
+              m_selected_points.Clear();
+              m_selected_convexhulls.Clear();
+
+
+              // update player turn
+              player1Turn = !player1Turn;
+              m_GUIManager.OnTurnStart(player1Turn);
+
+          }
+        }
+
+        public void Connect()
+        {
+
+          // check validness (1) 2pts, (2) line segment not exist;
+          if (m_selected_points.Count < 2) return;
+          var seg1 = new P2Segment(m_selected_points[0], m_selected_points[1], isPlayer1Turn);
+          var seg2 = new P2Segment(m_selected_points[0], m_selected_points[1], !isPlayer1Turn);
+
+          if (m_segments.Contains(seg1)) return;
+          if (m_segments.Contains(seg2)) return;
+
+          var seg = seg1.Segment;
+
+          //draw line segment, add segment to current Player,
+          if (isPlayer1Turn)
+          {
+            Player1Segements.Add(seg);
+            m_segments.Add(seg);
+
+            var P1mesh = Instantiate(m_P1LineMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
+
+            P1mesh.transform.parent = this.transform;
+            P1mesh.GetComponent<P2Segment>().Segment = seg;
+
+            instantObjects.Add(P1mesh);
+            P1lineMeshes.Add(P1mesh);
+            var P1meshScript = P1mesh.GetComponent<ReshapingMesh>();
+            P1meshScript.CreateNewMesh(seg.Point1, seg.Point2);
+          }
+          else
+          {
+              Player2Segements.Add(seg);
+              m_segments.Add(seg);
+
+              var P2mesh = Instantiate(m_P2LineMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
+
+              P2mesh.transform.parent = this.transform;
+              P2mesh.GetComponent<P2Segment>().Segment = seg;
+
+              instantObjects.Add(P2mesh);
+              P2lineMeshes.Add(P2mesh);
+              var P2meshScript = P2mesh.GetComponent<ReshapingMesh>();
+              P2meshScript.CreateNewMesh(seg.Point1, seg.Point2);
+            }
+
+
+          //TODO: check possible convex hull, add convex hull to current player, update score
+          if (isPlayer1Turn)
+          {
+            if (Player1Points.Contains(seg.Point1) || Player1Points.Contains(seg.Point2))
+            {
+              CheckPolygon(seg.Point1);
+            }
+          }
+          Player1Points.Add(seg.Point1);
+          Player1Points.Add(seg.Point2);
+
+          Player1Points = Player1Points.Distinct().ToList();
+          //TODO: check convex hull intersection, update intersection area;
+
+
+        }
+
+        public void Merge()
+        {
+          //TODO: check validness (1) 2 polygon, (2) mergechance > 1;
+          //TODO: compute new convex hull, remove old 2 convex hulls, add new convex hull to current player, update score
+          //TODO: check convex hull intersection, update intersection area;
+
+        }
+
+        private void CheckPolygon(Vector2 startPoint){
+          var edges;
+          var points;
+          if (isPlayer1Turn) {
+            edges = Player1Segements;
+            points = Player1Points;
+          }
+          else {
+            edges = Player2Segements;
+            points = Player2Points;
+          }
+
+          //TODO: turn the set into nodelink list
+          int [,] edgeList = new int[points.Count, points.Count];
+
+          //TODO: DFS from startPoint to find cycle;
+
+
         }
 
         private void OnRenderObject()
@@ -237,74 +484,34 @@ namespace CHGame
         }
 
         /// <summary>
-        /// Process a turn taken
+        /// Clears hull and relevant game objects
         /// </summary>
-        private void ProcessTurn()
+        private void Clear()
         {
-            if (m_halfTurnsTaken == 0)
+
+            m_points.Clear();
+            m_segments.Clear();
+            m_selected_points.Clear();
+            m_rateList.Clear();
+
+            hintMeshes.Clear();
+            lineMeshes.Clear();
+
+            // destroy game objects created in level
+            foreach (var obj in instantObjects)
             {
-                // game has just been started
-                m_GUIManager.OnStartClicked();
-            }
-
-            // load victory if screen clicked after every player has taken turn
-            if (m_halfTurnsTaken >= 2 * m_turns)
-            {
-                if (m_playerArea[0] > m_playerArea[1])
-                {
-                    SceneManager.LoadScene(m_p1Victory);
-                }
-                else
-                {
-                    SceneManager.LoadScene(m_p2Victory);
-                }
-            }
-            else
-            {
-                // obtain mouse position vector
-                var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                pos.y = 0;
-                var me = new Vector2(pos.x, pos.z);
-
-                // check if vertex already in graph to avoid degenerate cases
-                if (m_ownership.ToList().Exists(v => MathUtil.EqualsEps(v.Key, me)))
-                {
-                    return;
-                }
-
-                // store owner of vertex
-                m_ownership.Add(me, player1Turn ? EOwnership.PLAYER1 : EOwnership.PLAYER2);
-
-                Delaunay.AddVertex(m_delaunay, me);
-
-                // instantiate the relevant game object at click position
-                var prefab = player1Turn ? m_Player1Prefab : m_Player2Prefab;
-                var onClickObject = Instantiate(prefab, pos, Quaternion.identity) as GameObject;
-
-                if (onClickObject == null)
-                {
-                    throw new InvalidProgramException("Couldn't instantiate m_PlayerPrefab!");
-                }
-
-                // set parent to this game object for better nesting
-                onClickObject.transform.parent = gameObject.transform;
-
-                // add object to the fish manager
-                m_fishManager.AddFish(onClickObject.transform, player1Turn, m_withLookAtOnPlacement);
-
-                UpdateVoronoi();
-
-                // update player turn
-                player1Turn = !player1Turn;
-                m_GUIManager.OnTurnStart(player1Turn);
-
-                //Update turn counter
-                m_halfTurnsTaken += 1;
-                if (m_halfTurnsTaken >= 2 * m_turns)
-                {
-                    m_GUIManager.OnLastMove();
-                }
+                // destroy immediate
+                // since controller will search for existing objects afterwards
+                DestroyImmediate(obj);
             }
         }
+
+
+        public void CheckSolution()
+        {}
+
+        public void AdvanceLevel()
+        {}
+
     }
 }

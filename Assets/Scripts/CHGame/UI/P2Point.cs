@@ -8,39 +8,58 @@ namespace CHGame
         public Vector2 Pos { get; private set; }
 
         public Sprite originalPointSprite;
-        public Sprite selectedPointSprite;
+        public Sprite Player1PointSprite;
+        public Sprite Player2PointSprite;
         public bool selected;
+        public bool belongToPlayer1;
+        public EOwnership ownership;
         private SpriteRenderer spriteR;
 
         private P2Controller m_controller;
 
+        private enum EOwnership
+        {
+            UNOWNED,
+            PLAYER1,
+            PLAYER2
+        }
 
-       /* void Awake()
+
+        void Awake()
         {
             Pos = new Vector2(transform.position.x, transform.position.y);
             m_controller = FindObjectOfType<P2Controller>();
-            m_controller_point_game = FindObjectOfType<P2Controller>();
+          
             selected = false;
             spriteR = GetComponent<SpriteRenderer>();
+            ownership = UNOWNED;
         }
-        */
+
         void Update()
         {
 
-         /* if (selected)
+          if (selected)
           {
-            spriteR.sprite = selectedPointSprite;
+            if (belongToPlayer1)
+            {
+              spriteR.sprite = Player1PointSprite;
+            }
+            else
+            {
+              spriteR.sprite = Player2PointSprite;
+            }
+            //spriteR.sprite = selectedPointSprite;
           }
           else
           {
             spriteR.sprite = originalPointSprite;
-          }*/
+          }
         }
 
         void OnMouseDown()
         {
 
-            //  m_controller.m_pointSelection = true;
+            m_controller.m_pointSelection = true;
 
         }
 
@@ -48,8 +67,8 @@ namespace CHGame
         {
 
 
-           // m_controller.m_pointSelection = true;
-           // m_controller.m_current_point = this;
+            m_controller.m_pointSelection = true;
+            m_controller.m_current_point = this;
 
 
 
@@ -61,7 +80,7 @@ namespace CHGame
         void OnMouseExit()
         {
 
-           // m_controller.m_pointSelection = false;
+            m_controller.m_pointSelection = false;
 
 
 
