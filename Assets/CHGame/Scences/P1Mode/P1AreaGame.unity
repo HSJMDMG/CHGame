@@ -1503,7 +1503,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: P1 GAME
+  m_Text: 
 --- !u!222 &1110720159
 CanvasRenderer:
   m_ObjectHideFlags: 0
