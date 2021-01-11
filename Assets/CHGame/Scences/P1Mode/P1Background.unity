@@ -849,7 +849,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11497240, guid: 5bf2b46499c5a4b9490e088a2b964638, type: 3}
       propertyPath: m_Text
-      value: This is the background texts for 1-Player Mode
+      value: This mainland is occupied by the Kingdom of Noxus. To govern this land,
+        the king decides to build castles, because the area surrounded by castles
+        can be perfectly governed.  Finally, achieve his great dream conquering the
+        complete land. However, constructing a castle will consume penlty of money
+        and material. Hence, the king uses the land map to simulate his constructing
+        plan, such that he can conquer more areas with less castles.
       objectReference: {fileID: 0}
     - target: {fileID: 22485368, guid: 5bf2b46499c5a4b9490e088a2b964638, type: 3}
       propertyPath: m_LocalPosition.x
