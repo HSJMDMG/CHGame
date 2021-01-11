@@ -300,7 +300,7 @@ namespace CHGame
 
             // 60%, 80%, 95% pass level
             for (int i = 0; i < m_rateList.Count; i++) {
-              if (m_selected_Hull.PointNumber < (int)(m_rateList[i] * m_solutionHull.Area)) {
+              if (m_selected_Hull.PointNumber < (int)(m_rateList[i] * m_solutionHull.PointNumber)) {
                 return i;
               }
             }
