@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 2085045741292629223}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -95,9 +95,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da815096d52a94eb8ba490af86826691, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originalPointSprite: {fileID: 21300000, guid: 7bd18c9f5aade684e8fcd744a1b3cc21,
+  originalPointSprite: {fileID: 21300000, guid: 74a23ea97cf118444a78002b0729afbb,
     type: 3}
-  selectedPointSprite: {fileID: 21300000, guid: 56cce37477d62fe4580a7778ef84cd1a,
+  selectedPointSprite: {fileID: 21300000, guid: a5cfb3091f47fad449deb362635ecfcc,
     type: 3}
   selected: 0
 --- !u!61 &9116205421055456545
