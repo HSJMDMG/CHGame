@@ -376,7 +376,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 0
+  m_Text: -1
 --- !u!222 &113066196
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -397,6 +397,7 @@ GameObject:
   - component: {fileID: 172751873}
   - component: {fileID: 172751872}
   - component: {fileID: 172751871}
+  - component: {fileID: 172751874}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -494,6 +495,26 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &172751874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172751869}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dac82f47164e84ec28b237972d9b36fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_P1Panel: {fileID: 0}
+  m_P2Panel: {fileID: 0}
+  m_P1ScoreText: {fileID: 0}
+  m_P2ScoreText: {fileID: 0}
+  m_P1Text: {fileID: 0}
+  m_P2Text: {fileID: 0}
+  m_current_turn_number: {fileID: 0}
+  m_maximum_turn_number: {fileID: 0}
 --- !u!1 &199397128
 GameObject:
   m_ObjectHideFlags: 0
@@ -611,14 +632,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9411765, g: 0.7607843, b: 0.22352941, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 34db34b9a02b2f0499b98e78ebec7f1e, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -664,14 +685,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47bed38fb49b14a64894afed3bf61478, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Player1Prefab: {fileID: 0}
-  m_Player2Prefab: {fileID: 0}
-  m_withLookAtOnPlacement: 1
-  m_turns: 0
-  m_p1Victory: 
-  m_p2Victory: 
-  m_GUIManager: {fileID: 0}
-  m_meshFilter: {fileID: 0}
+  m_levels:
+  - {fileID: -9003133515812872745, guid: d04096a8ac57944318627034c1f39281, type: 3}
+  m_p1Victory: P2Victory1
+  m_p2Victory: P2Victory2
+  m_GUIManager: {fileID: 172751874}
+  m_maximumTurn: 10
+  m_turnCounter: 0
+  player1Turn: 1
+  PointPrefab: {fileID: 3313078091775762928, guid: 7e3f8a003315d444c9144954165b8fde,
+    type: 3}
+  PlayerLineMeshesPrefab:
+  - {fileID: 8139912144618445995, guid: ea57d54c56db34ff78b86c51273882ba, type: 3}
+  - {fileID: 8139912144618445995, guid: 788ce0ab1665348b08ace9a7d11a8075, type: 3}
+  PlayerPolygonMeshPrefab:
+  - {fileID: 5688100764436606091, guid: 8cc03c638e33b4beba19ca84e6bcf018, type: 3}
+  - {fileID: 8724647729403390828, guid: dbb7903b4313949b8b8f885c50ef8a54, type: 3}
+  m_points: []
+  PlayerLineMesh: []
 --- !u!4 &280460728
 Transform:
   m_ObjectHideFlags: 0
@@ -795,6 +826,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: ConnectButton
       objectReference: {fileID: 0}
+    - target: {fileID: 11418384, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 280460727}
+    - target: {fileID: 11418384, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Connect
+      objectReference: {fileID: 0}
+    - target: {fileID: 11418384, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 11426352, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
       propertyPath: m_Text
       value: Connect
@@ -913,6 +956,18 @@ PrefabInstance:
     - target: {fileID: 135086, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
       propertyPath: m_Name
       value: NextButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 11418384, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 280460727}
+    - target: {fileID: 11418384, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: NextTurn
+      objectReference: {fileID: 0}
+    - target: {fileID: 11418384, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 11426352, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
       propertyPath: m_Text
@@ -1279,7 +1334,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Round
+  m_Text: Turn
 --- !u!222 &562402726
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1472,14 +1527,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6901961, g: 0.6431373, b: 0.8901961, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 88deb8c624d5d38459b5109deb42a53e, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1890,14 +1945,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9411765, g: 0.7607843, b: 0.22352941, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 34db34b9a02b2f0499b98e78ebec7f1e, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -2139,7 +2194,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: P2 TURN
+  m_Text: P1  TURN
 --- !u!222 &1541944497
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2266,6 +2321,18 @@ PrefabInstance:
     - target: {fileID: 135086, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
       propertyPath: m_Name
       value: TrapezoidButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 11418384, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 280460727}
+    - target: {fileID: 11418384, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ShowHideTrapezoidMap
+      objectReference: {fileID: 0}
+    - target: {fileID: 11418384, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 11426352, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
       propertyPath: m_Text
@@ -2446,6 +2513,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: MergeButton
       objectReference: {fileID: 0}
+    - target: {fileID: 11418384, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 280460727}
+    - target: {fileID: 11418384, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Merge
+      objectReference: {fileID: 0}
+    - target: {fileID: 11418384, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 11426352, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
       propertyPath: m_Text
       value: Merge
@@ -2606,14 +2685,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6901961, g: 0.6431373, b: 0.8901961, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 88deb8c624d5d38459b5109deb42a53e, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -2699,7 +2778,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 10
+  m_Text: INF
 --- !u!222 &2122079850
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2867,3 +2946,72 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &1160636186567258261
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3313078091775762928, guid: 7e3f8a003315d444c9144954165b8fde,
+        type: 3}
+      propertyPath: m_Name
+      value: P2Point
+      objectReference: {fileID: 0}
+    - target: {fileID: 3532121091497688638, guid: 7e3f8a003315d444c9144954165b8fde,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3532121091497688638, guid: 7e3f8a003315d444c9144954165b8fde,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3532121091497688638, guid: 7e3f8a003315d444c9144954165b8fde,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3532121091497688638, guid: 7e3f8a003315d444c9144954165b8fde,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3532121091497688638, guid: 7e3f8a003315d444c9144954165b8fde,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3532121091497688638, guid: 7e3f8a003315d444c9144954165b8fde,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3532121091497688638, guid: 7e3f8a003315d444c9144954165b8fde,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3532121091497688638, guid: 7e3f8a003315d444c9144954165b8fde,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3532121091497688638, guid: 7e3f8a003315d444c9144954165b8fde,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3532121091497688638, guid: 7e3f8a003315d444c9144954165b8fde,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3532121091497688638, guid: 7e3f8a003315d444c9144954165b8fde,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7e3f8a003315d444c9144954165b8fde, type: 3}

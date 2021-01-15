@@ -12,7 +12,7 @@ namespace CHGame
         public Sprite Player2PointSprite;
         public bool selected;
         public bool belongToPlayer1;
-        public EOwnership ownership;
+        //public EOwnership ownership;
         private SpriteRenderer spriteR;
 
         private P2Controller m_controller;
@@ -32,7 +32,7 @@ namespace CHGame
 
             selected = false;
             spriteR = GetComponent<SpriteRenderer>();
-            ownership = UNOWNED;
+            //ownership = UNOWNED;
         }
 
         void Update()

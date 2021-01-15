@@ -16,7 +16,7 @@
       /// <summary>
       /// combine 2 convex hulls
       /// </summary>
-      /// <param name="a_points"></param>
+
       public static Polygon2D ComputeConvexHull(IPolygon2D polygon1, IPolygon2D polygon2)
       {
          //TODO: change to O(n) algorithm

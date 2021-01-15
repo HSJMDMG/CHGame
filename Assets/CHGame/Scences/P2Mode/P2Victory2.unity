@@ -834,7 +834,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11497240, guid: 5bf2b46499c5a4b9490e088a2b964638, type: 3}
       propertyPath: m_Text
-      value: 'Player 1
+      value: 'Player 2
 
         Win
 

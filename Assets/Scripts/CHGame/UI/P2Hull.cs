@@ -7,14 +7,14 @@ namespace CHGame
     using Util.Geometry.Polygon;
     using Util.Math;
 
-    public static class P2Hull
+    public class P2Hull : MonoBehaviour
     {
-        public bool mergeChance = true;
-        public bool nested = false;
-        Polygon2D hull;
-        MeshRenderer MeshR;
+        public bool mergeChance;
+        public bool nested;
+        public Polygon2D hull;
+        public MeshRenderer MeshR;
         private P2Controller m_controller;
-        bool selected;
+        public  bool selected;
         public bool belongToPlayer1;
 
         private enum EOwnership
@@ -27,63 +27,59 @@ namespace CHGame
 
         //TODO: add change mesh listener
 
-          void Awake()
-          {
-              Pos = new Vector2(transform.position.x, transform.position.y);
-              m_controller = FindObjectOfType<P2Controller>();
+        void Awake()
+        {
+            mergeChance = true;
+            nested = false;
+            selected = false;
 
-              selected = false;
-              MeshR = GetComponent<MeshRenderer>();
-              ownership = UNOWNED;
-          }
+            m_controller = FindObjectOfType<P2Controller>();
+            MeshR = GetComponent<MeshRenderer>();
 
-          void Update()
-          {
+        }
 
+        void Update()
+        {
 
             if (selected)
             {
-              MeshR.material = MeshR.materials[0];
+                MeshR.material = MeshR.materials[0];
             }
             else
             {
-              MeshR.material = MeshR.materials[1];
+                MeshR.material = MeshR.materials[1];
             }
 
-            //TODO: render the convex hull with mesh
-          }
+        }
 
-          void OnMouseDown()
-          {
+        void OnMouseDown()
+        {
 
-              m_controller.m_hullSelection = true;
+            m_controller.m_hullSelection = true;
 
-          }
+        }
 
-          void OnMouseEnter()
-          {
-
-
-              m_controller.m_hullSelection = true;
-              m_controller.m_current_hull = this;
+        void OnMouseEnter()
+        {
 
 
+            m_controller.m_hullSelection = true;
+            m_controller.m_current_hull = this;
 
-              //m_controller.m_locked = true;
-              //m_controller.m_secondPoint = this;
-              //m_controller.m_line.SetPosition(1, Pos);
-          }
+            //m_controller.m_locked = true;
+            //m_controller.m_secondPoint = this;
+            //m_controller.m_line.SetPosition(1, Pos);
+        }
 
-          void OnMouseExit()
-          {
+        void OnMouseExit()
+        {
 
-              m_controller.m_hullSelection = false;
+            m_controller.m_hullSelection = false;
 
-
-
-              //m_controller.m_locked = false;
-              //m_controller.m_secondPoint = null;
-              //var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition + 10 * Vector3.forward);
-              //m_controller.m_line.SetPosition(1, pos);
-          }
+            //m_controller.m_locked = false;
+            //m_controller.m_secondPoint = null;
+            //var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition + 10 * Vector3.forward);
+            //m_controller.m_line.SetPosition(1, pos);
+        }
+    }
 }

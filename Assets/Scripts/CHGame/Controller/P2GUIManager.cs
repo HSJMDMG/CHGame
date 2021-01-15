@@ -28,12 +28,12 @@
         {
           m_P1Panel = GameObject.Find("P1TurnPanel");
           m_P2Panel = GameObject.Find("P2TurnPanel");
-          m_P1ScoreText = GameObject.Find("P1Score");
-          m_P2ScoreText = GameObject.Find("P2Score");
-          m_P1Text = GameObject.Find("P1Text");
-          m_P2Text = GameObject.Find("P2Text");
-          m_current_turn_number = GameObject.Find("CurrentTurnNumber");
-          m_maximum_turn_number = GameObject.Find("MaximumTurnNumber");
+          m_P1ScoreText = GameObject.Find("P1Score").GetComponent<Text>();
+          m_P2ScoreText = GameObject.Find("P2Score").GetComponent<Text>();
+          m_P1Text = GameObject.Find("P1Text").GetComponent<Text>();
+          m_P2Text = GameObject.Find("P2Text").GetComponent<Text>();
+          m_current_turn_number = GameObject.Find("CurrentTurnNumber").GetComponent<Text>();
+          m_maximum_turn_number = GameObject.Find("MaximumTurnNumber").GetComponent<Text>();
         }
 
 

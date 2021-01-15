@@ -1,15 +1,21 @@
 namespace CHGame
 {
-    using System;
+    using General.Menu;
+    using General.Model;
     using System.Collections.Generic;
     using System.Linq;
     using UnityEngine;
-    using UnityEngine.SceneManagement;
-    using Util.Algorithms.DCEL;
+    using Util.Geometry.Polygon;
     using Util.Algorithms.Polygon;
+    using Util.Geometry;
+    using General.Controller;
+    using UnityEngine.SceneManagement;
+    using UnityEngine.UI;
+
+    using System;
+    using Util.Algorithms.DCEL;
     using Util.Algorithms.Triangulation;
     using Util.Geometry.DCEL;
-    using Util.Geometry.Polygon;
     using Util.Geometry.Triangulation;
     using Util.Math;
     using Voronoi;
@@ -20,41 +26,38 @@ namespace CHGame
     public class P2Controller : MonoBehaviour, IController
     {
 
-        public bool player1Turn;
-
-
 
         //To load data from ipe
         [SerializeField]
-        private List<P1AreaLevel> m_levels;
+        private List<P2Level> m_levels;
         protected int m_levelCounter = 0;
 
-        // controller parameters
-        public int m_turns;
+
 
         // names of differnt victory scenes
         public string m_p1Victory;
         public string m_p2Victory;
 
         public P2GUIManager m_GUIManager;
-        public MeshFilter m_meshFilter;
+        //public MeshFilter m_meshFilter;
 
         // variables defining state of turns
 
         [SerializeField]
         private int m_maximumTurn;
+        [SerializeField]
         private int m_turnCounter;
+        [SerializeField]
         private bool player1Turn;
         private int playerIndex;
 
         private float[] m_playerArea;
 
-        private Triangulation m_delaunay;
-        private FishManager m_fishManager;
-        private Polygon2D m_meshRect;
 
-        internal List<GameObject>[] PlayerLineMeshesPrefab; // drag and drop 2 prefabs
-        internal List<GameObject>[] PlayerPolygonMeshPrefab; //drag and drop 2 prefabs
+
+        public  GameObject PointPrefab;
+        public List<GameObject> PlayerLineMeshesPrefab; // drag and drop 2 prefabs
+        public List<GameObject> PlayerPolygonMeshPrefab; //drag and drop 2 prefabs
 
 
         [SerializeField]
@@ -64,6 +67,7 @@ namespace CHGame
         //m_segments only contains coordinates;
         private HashSet<P2Segment> m_segments;
         private List<GameObject> instantObjects;
+        private float epsilon;
 
         private List<P2Point> m_selected_points;
         private List<P2Hull> m_selected_convexhulls;
@@ -79,14 +83,15 @@ namespace CHGame
 
 
         private List<P2Hull>[] PlayerPolygons;
-        private List<Verctor2>[] PlayerPoints;
+        private List<Vector2>[] PlayerPoints;
         private List<P2Segment>[] PlayerSegments;
         private List<GameObject>[] PlayerPolygonMeshes;
+        private List<GameObject>[] PlayerLineMeshes;
         private int[] PlayerPolygonId;
 
 
-        private GameObject[] PlayerPolygonMeshCollection;
-        internal GameObject[] lineMeshCollection;
+        private GameObject[] PlayerPolygonMeshCollection; // Polygon Mesh Prefabs
+        internal GameObject[] lineMeshCollection; //line Mesh Prefabs
 
         internal GameObject[] PlayerScoreText;
         internal float[] PlayerScore;
@@ -115,10 +120,10 @@ namespace CHGame
           instantObjects = new List<GameObject>();
 
           m_selected_points = new List<P2Point>();
-          m_rateList = new List<float>();
+          m_selected_convexhulls = new List<P2Hull>();
 
-          //parameter for affine transformation
-          epsilon = 0.2f;
+            //parameter for affine transformation
+            epsilon = 0.2f;
 
           //counter
           m_maximumTurn = 10;
@@ -132,25 +137,32 @@ namespace CHGame
           PlayerPoints = new List<Vector2>[2] {new List<Vector2>(), new List<Vector2>()};
           PlayerSegments = new List<P2Segment>[2]{new List<P2Segment>(), new List<P2Segment>()};
           PlayerPolygonMeshes = new List<GameObject>[2] {new List<GameObject>(), new List<GameObject>()};
-          //PlayerPolygonMeshPrefab = new GameObject[2];
-          PlayerPolygonMeshCollection = new GameObject[2] {GameObject.Find("Player1PolygonCollection"),GameObject.Find("Player2PolygonCollection")};
+          PlayerLineMeshes = new List<GameObject>[2] { new List<GameObject>(), new List<GameObject>() };
+
+
+            //PlayerPolygonMeshPrefab = new GameObject[2];
+            PlayerPolygonMeshCollection = new GameObject[2] {GameObject.Find("Player1PolygonCollection"),GameObject.Find("Player2PolygonCollection")};
           lineMeshCollection = new GameObject[2] {GameObject.Find("Player1LineCollection"),GameObject.Find("Player2LineCollection")};
 
           //initialize score panel
           PlayerScoreText = new GameObject[2] {GameObject.Find("P1Score"), GameObject.Find("P2Score")};
           PlayerScore = new float[2];
+
+
           InitLevel();
 
         }
 
         private void Update()
         {
-
-
-            if (Input.GetKeyDown("t"))
+         /* Show Trapezoidal Decomposition
+          *
+          * if (Input.GetKeyDown("t"))
             {
                 P2Drawer.EdgesOn = !P2Drawer.EdgesOn;
             }
+            */
+
 
             //add point listener
             if (m_pointSelection && Input.GetMouseButton(0))
@@ -201,7 +213,7 @@ namespace CHGame
                   }
                   else {
                     if (m_selected_convexhulls.Count < 2) {
-                      m_selected_hull.selected = true;
+                      m_current_hull.selected = true;
                       m_selected_convexhulls.Add(m_current_hull);
 
                     }
@@ -259,11 +271,11 @@ namespace CHGame
             // initialize settlements
             for (var i = 0; i < m_levels[m_levelCounter].Points.Count; i++)  {
 
-              m_levels[m_levelCounter].Points[i] += new Vector2(epsilon * (Random.Range(0f, 1f) - 0.5f), epsilon * (Random.Range(0f, 0.1f)));
+              m_levels[m_levelCounter].Points[i] += new Vector2(epsilon * (UnityEngine.Random.Range(0f, 1f) - 0.5f), epsilon * (UnityEngine.Random.Range(0f, 0.1f)));
 
               var point = m_levels[m_levelCounter].Points[i];
 
-              var obj = Instantiate(m_pointPrefab, point, Quaternion.identity) as GameObject;
+              var obj = Instantiate(PointPrefab, point, Quaternion.identity) as GameObject;
               obj.transform.parent = GameObject.Find("PointCollection").transform;
               instantObjects.Add(obj);
 
@@ -272,15 +284,17 @@ namespace CHGame
             m_pointSelection = false;
 
             //Make vertex list
-            m_points = FindObjectsOfType<P2Point>().ToList();
+            //m_points = FindObjectsOfType<P2Point>().ToList();
         }
 
 
-        public void showTrapezoidMap()
+        public void ShowHideTrapezoidMap()
         {
           // show/hide trapezoid map
-          P2Drawer.EdgesOn = !P2Drawer.EdgesOn;
+        //  P2Drawer.EdgesOn = !P2Drawer.EdgesOn;
         }
+
+
 
         /// <summary>
         /// Process next turn
@@ -288,8 +302,8 @@ namespace CHGame
         public void NextTurn()
         {
           m_turnCounter++;
-          player1Turn = !Player1Turn;
-          playerIndex = Player1Turn ? 0 : 1;
+          player1Turn = !player1Turn;
+          playerIndex = player1Turn ? 0 : 1;
           //load victory scene
           if (m_turnCounter > m_maximumTurn)
           {
@@ -323,8 +337,8 @@ namespace CHGame
 
           // check validness (1) 2pts, (2) line segment not exist; (3) not crossed with existing segments (5) not intersecting existing polygon
           if (m_selected_points.Count < 2) return;
-          var seg1 = new P2Segment(m_selected_points[0], m_selected_points[1], player1Turn);
-          var seg2 = new P2Segment(m_selected_points[0], m_selected_points[1], !player1Turn);
+          var seg1 = new P2Segment(m_selected_points[0].Pos, m_selected_points[1].Pos, player1Turn);
+          var seg2 = new P2Segment(m_selected_points[0].Pos, m_selected_points[1].Pos, !player1Turn);
 
           if (m_segments.Contains(seg1)) return;
           if (m_segments.Contains(seg2)) return;
@@ -334,7 +348,7 @@ namespace CHGame
           foreach (P2Segment s in PlayerSegments[playerIndex])
             if (LineSegment.IntersectProper(s.Segment, seg.Segment) != null) return;
 
-          if (segIntersectPolygon(seg, playerIndex)) return;
+          if (SegIntersectPolygon(seg, playerIndex)) return;
 
           //points on existing polygon cannot be selected.
           //Some explanations: If we can select points on existing polygon, we need to deal with the case: one line segement connecting two polygon
@@ -347,8 +361,8 @@ namespace CHGame
 
 
           //add both vertices and segment to current player
-          PlayerPoints[playerIndex].Add(seg.Point1);
-          PlayerPoints[playerIndex].Add(seg.Point2);
+          PlayerPoints[playerIndex].Add(seg.Segment.Point1);
+          PlayerPoints[playerIndex].Add(seg.Segment.Point2);
           PlayerPoints[playerIndex] = PlayerPoints[playerIndex].Distinct().ToList();
 
           PlayerSegments[playerIndex].Add(seg);
@@ -357,10 +371,11 @@ namespace CHGame
           //draw line segment,
           var mesh = Instantiate(PlayerLineMeshesPrefab[playerIndex], Vector3.forward, Quaternion.identity) as GameObject;
           mesh.transform.parent = this.transform;
-          mesh.GetComponent<P2Segment>() = seg;
+          mesh.GetComponent<P2Segment>().CopySegment(seg);
 
           instantObjects.Add(mesh);
-          lineMeshCollection[playerIndex].Add(mesh);
+          PlayerLineMeshes[playerIndex].Add(mesh);
+
           var meshScript = mesh.GetComponent<ReshapingMesh>();
           meshScript.CreateNewMesh(seg.Segment.Point1, seg.Segment.Point2);
 
@@ -369,10 +384,10 @@ namespace CHGame
 
           //TODO: add new convex hull (if exist) to current player, draw convex hull, update score
 
-          P2Hull newpolygon = FindPolygon(playerIndex, seg.Point1);
+          P2Hull newpolygon = FindPolygon(playerIndex, seg.Segment.Point1);
 
           if (newpolygon != null) {
-            PlayerPolygons[playerIndex].Add(nHull);
+            PlayerPolygons[playerIndex].Add(newpolygon);
             UpdateMesh(newpolygon.hull, playerIndex);
 
             if (newpolygon.hull.VertexCount > 0) {
@@ -381,7 +396,7 @@ namespace CHGame
 
             //For the other player, disable the merging for polygon with intersection
 
-            foreach (P2HULL polygon in Player[1 - playerIndex])
+            foreach (P2Hull polygon in PlayerPolygons[1 - playerIndex])
             {
               if (Intersector.IntersectConvex(polygon.hull, newpolygon.hull) != null) {
                 polygon.mergeChance = false;
@@ -412,47 +427,49 @@ namespace CHGame
 
           //TODO: compute new convex hull,  add new convex hull to current player, update score
 
-          Polygon2D newhull = ConvexHull.CombineConvexHull(m_selected_convexhulls[0], m_selected_convexhulls[1]);
+          Polygon2D newhull = ConvexHull.ComputeConvexHull(m_selected_convexhulls[0].hull, m_selected_convexhulls[1].hull);
 
           UpdateMesh(newhull, playerIndex);
 
-          P2Hull newpolygon = new P2Hull();
-          newpolygon.hull = newhull;
-          newpolygon.mergeChance = false;
+            P2Hull newpolygon = new P2Hull
+            {
+                hull = newhull,
+                mergeChance = false
+            };
 
-          PlayerScore[playerIndex] += newpolygon.hull.Area;
+            PlayerScore[playerIndex] += newpolygon.hull.Area;
 
           PlayerPolygons[playerIndex].Add(newpolygon);
-          foreach (var v in newpolygon.Vertices) {
+          foreach (var v in newpolygon.hull.Vertices) {
             PlayerPoints[playerIndex].Add(v);
           }
-          foreach (var seg in newpolygon.Segments) {
-            PlayerSegments[playerIndex].Add(new P2Segment(seg.Point1, seg.Point2));
+          foreach (var seg in newpolygon.hull.Segments) {
+            PlayerSegments[playerIndex].Add(new P2Segment(seg.Point1, seg.Point2, player1Turn));
           }
 
 
           UpdateScore();
-          //TODO: check convex hull intersection, update intersection area;
+
 
         }
 
-        bool segIntersectPolygon(P2Hull seg, int playerIndex) {
-          foreach (P2Hull p in Player[playerIndex]) {
+        bool SegIntersectPolygon(P2Segment seg, int playerIndex) {
+          foreach (P2Hull p in PlayerPolygons[playerIndex]) {
+            if (p.hull.Contains(seg.Segment.Point1)) return true;
+            if (p.hull.Contains(seg.Segment.Point2)) return true;
+          }
+          return false;
+        }
+
+        bool InPolygon(Vector2 p1, Vector2 p2, int playerIndex) {
+          foreach (P2Hull p in PlayerPolygons[playerIndex]) {
             if (p.hull.Contains(p1)) return true;
             if (p.hull.Contains(p2)) return true;
           }
           return false;
         }
 
-        bool InPolygon(Vector2D p1, Vector2D p2, int playerIndex) {
-          foreach (P2Hull p in Player[playerIndex]) {
-            if (p.hull.Contains(p1)) return true;
-            if (p.hull.Contains(p2)) return true;
-          }
-          return false;
-        }
-
-        private void FindPolygon(int playerIndex, Vector2 startPoint){
+        private P2Hull FindPolygon(int playerIndex, Vector2 startPoint){
 
 
           //turn the set into nodelink list
@@ -462,13 +479,11 @@ namespace CHGame
           int[] edgeNum  = new int[points.Count];
 
           foreach (P2Segment edge in edges) {
-            var seg = edge.Segments;
-
-            int i, j;
-            i = points.FindIndex(seg.Point1);
-            j = points.FindIndex(seg.Point2);
-            edgeList[i][edgeNum[i]++] = j;
-            edgeList[j][edgeNum[j]++] = i;
+            int i,j;
+            i = points.IndexOf(edge.Segment.Point1);
+            j = points.IndexOf(edge.Segment.Point2);
+            edgeList[i, edgeNum[i]++] = j;
+            edgeList[j, edgeNum[j]++] = i;
           }
 
           //DFS from startPoint to find cycle;
@@ -482,11 +497,11 @@ namespace CHGame
             pre[i] = -1;
           }
 
-          int vi = points.FindIndex(startPoint);
+          int vi = points.IndexOf(startPoint);
 
           //There will be only one cycle created
 
-          if (DFS(vi, pre, visited, edgeList, edgeNum, cycle)) {
+          if (DFS(vi, ref pre,ref visited, edgeList, edgeNum,ref cycle)) {
             List<Vector2> CyclePoints;
             CyclePoints = new List<Vector2>();
             foreach (var pointNum in cycle) {
@@ -494,8 +509,10 @@ namespace CHGame
             }
             //Copmute the Convex HUll
             Polygon2D newHull= ConvexHull.ComputeConvexHull(CyclePoints);
-            P2Hull nhull = new P2Hull();
-            nhull.hull = newHull;
+            P2Hull nhull = new P2Hull
+            {
+                hull = newHull
+            };
 
 
             return nhull;
@@ -506,7 +523,7 @@ namespace CHGame
 
         }
 
-        void UpdateMesh(Polygon2D Hull, int playerIndex) {
+        private void UpdateMesh(Polygon2D Hull, int playerIndex) {
 
           // build vertices and triangle list
           var vertices = new List<Vector3>();
@@ -542,7 +559,7 @@ namespace CHGame
           Mesh mesh = new Mesh();
           // update mesh
           mesh.vertices = vertices.ToArray();
-          mesh.triagnles = triangles;
+          mesh.triangles = triangles.ToArray();
           mesh.uv = newUVs.ToArray();
           mesh.RecalculateBounds();
 
@@ -561,7 +578,7 @@ namespace CHGame
           //TODO: add selected material
         }
 
-        bool  DFS(Vector2 current_point, ref int[] pre, ref bool[] visited,  int[,] edgeList, int[] edgeNum, ref List<int> cycle) {
+        bool  DFS(int current_point, ref int[] pre, ref bool[] visited,  int[,] edgeList, int[] edgeNum, ref List<int> cycle) {
           if (visited[current_point]) {
 
               int v = current_point;
@@ -572,18 +589,19 @@ namespace CHGame
             return true;
           }
 
-          for (int i = 0; i > edgeList[edgeNum[current_point]])
-          {
-            if (!visited[i]) {
-              pre[i] = current_point;
-              visited[i] = true;
-              if (DFS(i))
-              {
-                return true;
-              }
-              pre[i] = -1;
-              visited[i] = false;
-            }
+          for (int num = 0; num < edgeNum[current_point]; num++)
+            {
+                int i = edgeList[current_point, num];
+                if (!visited[i]) {
+                  pre[i] = current_point;
+                  visited[i] = true;
+                  if (DFS(i, ref pre, ref visited, edgeList, edgeNum, ref cycle))
+                  {
+                    return true;
+                  }
+                  pre[i] = -1;
+                  visited[i] = false;
+                }
           }
 
           return false;
@@ -592,6 +610,8 @@ namespace CHGame
 
 
 
+
+        /*
 
         /// <summary>
         /// Calculates total area owned by each player separately.
@@ -616,20 +636,16 @@ namespace CHGame
             // update GUI to reflect new player area owned
             m_GUIManager.SetPlayerAreaOwned(m_playerArea[0], m_playerArea[1]);
         }
-
+         */
         /// <summary>
         /// Clears hull and relevant game objects
         /// </summary>
         private void Clear()
         {
 
-            m_points.Clear();
-            m_segments.Clear();
             m_selected_points.Clear();
-            m_rateList.Clear();
+            m_selected_convexhulls.Clear();
 
-            hintMeshes.Clear();
-            lineMeshes.Clear();
 
             // destroy game objects created in level
             foreach (var obj in instantObjects)
