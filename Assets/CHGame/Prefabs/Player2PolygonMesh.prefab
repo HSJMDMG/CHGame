@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8724647729403390831}
   - component: {fileID: 8724647729403390829}
   - component: {fileID: 8724647729403390830}
+  - component: {fileID: 8657685032737070103}
   m_Layer: 0
   m_Name: Player2PolygonMesh
   m_TagString: Untagged
@@ -58,8 +59,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 611eaec2adf16564eba474be5cb51313, type: 2}
-  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -80,3 +80,22 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &8657685032737070103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8724647729403390828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79c70c83f50214587b6538e273ce998e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mergeChance: 0
+  nested: 0
+  MeshR: {fileID: 8724647729403390830}
+  selected: 0
+  belongToPlayer1: 0
+  selectedMaterial: {fileID: 2100000, guid: 33e9fe11381b58a4a9c4c7ed2014fe65, type: 2}
+  originalMaterial: {fileID: 2100000, guid: 611eaec2adf16564eba474be5cb51313, type: 2}

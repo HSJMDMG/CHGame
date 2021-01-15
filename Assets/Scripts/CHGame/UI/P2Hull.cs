@@ -16,6 +16,8 @@ namespace CHGame
         private P2Controller m_controller;
         public  bool selected;
         public bool belongToPlayer1;
+        public Material selectedMaterial;
+        public Material originalMaterial;
 
         private enum EOwnership
         {
@@ -43,11 +45,11 @@ namespace CHGame
 
             if (selected)
             {
-                MeshR.material = MeshR.materials[0];
+                MeshR.material = selectedMaterial;
             }
             else
             {
-                MeshR.material = MeshR.materials[1];
+                MeshR.material = originalMaterial;
             }
 
         }
@@ -64,7 +66,7 @@ namespace CHGame
 
 
             m_controller.m_hullSelection = true;
-            m_controller.m_current_hull = this;
+            m_controller.m_current_hull = gameObject;
 
             //m_controller.m_locked = true;
             //m_controller.m_secondPoint = this;

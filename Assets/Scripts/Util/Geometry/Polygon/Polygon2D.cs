@@ -15,7 +15,7 @@
     public class Polygon2D : IPolygon2D
     {
         private LinkedList<Vector2> m_vertices;
-
+        private bool mergeChance;
         // some cache variables for speedup
         private List<LineSegment> m_segments;
         private float m_area = -1f;
