@@ -61,17 +61,19 @@ namespace CHGame
         public List<GameObject> PlayerLineMeshesPrefab; // drag and drop 2 prefabs
         public List<GameObject> PlayerPolygonMeshPrefab; //drag and drop 2 prefabs
 
+        //TODO: UPDATE m-points, m-segments;
+        [SerializeField]
+        private List<P2Point> m_points;
 
         [SerializeField]
-        //TODO: UPDATE m-points, m-segments;
-
-        private List<P2Point> m_points;
         //m_segments only contains coordinates;
-        private HashSet<P2Segment> m_segments;
+        private HashSet<LineSegment> m_segments;
         private List<GameObject> instantObjects;
         private float epsilon;
 
+        [SerializeField]
         private List<P2Point> m_selected_points;
+        [SerializeField]
         private List<P2Hull> m_selected_convexhulls;
 
         internal bool m_pointSelection;
@@ -83,9 +85,13 @@ namespace CHGame
         public LineRenderer[] PlayerLineMesh;
 
 
+        public int m_totoalPointNum;
 
-        private List<P2Hull>[] PlayerPolygons;
-        private List<Vector2>[] PlayerPoints;
+        private List<Polygon2D>[] PlayerPolygons;
+        private List<GameObject>[] PlayerPolygonObjectes;
+        [SerializeField]
+        public List<Vector2>[] PlayerPoints;
+        [SerializeField]
         private List<P2Segment>[] PlayerSegments;
         private List<GameObject>[] PlayerPolygonMeshes;
         private List<GameObject>[] PlayerLineMeshes;
@@ -93,7 +99,8 @@ namespace CHGame
 
 
         private GameObject[] PlayerPolygonMeshCollection; // 2 empty gameobject to hold polygon meshs
-        internal GameObject[] LineMeshCollection; //2 empty gameobject to hold line meshs
+        private GameObject[] LineMeshCollection; //2 empty gameobject to hold line meshs
+
 
 
         private GameObject[] PlayerScoreText;
@@ -103,6 +110,7 @@ namespace CHGame
 
         internal float[] PlayerScore;
 
+        private bool operated;
         // dcel
         // calculated after every turn
         private DCEL m_DCEL;
@@ -124,7 +132,7 @@ namespace CHGame
         {
 
           m_points = new List<P2Point>();
-          m_segments = new HashSet<P2Segment>();
+            m_segments = new HashSet<LineSegment>();
           instantObjects = new List<GameObject>();
 
           m_selected_points = new List<P2Point>();
@@ -139,6 +147,7 @@ namespace CHGame
           player1Turn = true;
 
 
+            operated = false;
 
 
         //initialize geometry lists for players
@@ -179,35 +188,39 @@ namespace CHGame
 
 
             //add point listener
-            if (m_pointSelection && Input.GetMouseButton(0))
-            {
-              if (m_current_point.selected)
-              {
-                //change sprite
-                m_current_point.selected = false;
-                //remove the point from selected point list
-                if (m_selected_points.Contains(m_current_point))
+            if (!operated) {
+                if (m_pointSelection && Input.GetMouseButton(0))
                 {
-                  m_selected_points.Remove(m_current_point);
-                }
+                    if (m_current_point.selected)
+                    {
+                        //change sprite
+                        m_current_point.selected = false;
+                        //remove the point from selected point list
+                        if (m_selected_points.Contains(m_current_point))
+                        {
+                            m_selected_points.Remove(m_current_point);
+                        }
 
-                m_pointSelection = false;
-              }
-              else
-              {
-                if (m_selected_points.Count <  2) {
-                  //change sprite
-                  m_current_point.selected = true;
-                  m_current_point.belongToPlayer1 = player1Turn;
-                  //add the point into selected pointlist
-                  if (! m_selected_points.Contains(m_current_point))
-                  {
-                    m_selected_points.Add(m_current_point);
-                  }
-                  m_pointSelection = false;
+                        m_pointSelection = false;
+                    }
+                    else
+                    {
+                        if (m_selected_points.Count < 2)
+                        {
+                            //change sprite
+                            m_current_point.selected = true;
+                            m_current_point.belongToPlayer1 = player1Turn;
+                            //add the point into selected pointlist
+                            if (!m_selected_points.Contains(m_current_point))
+                            {
+                                m_selected_points.Add(m_current_point);
+                            }
+                            m_pointSelection = false;
+                        }
+                    }
                 }
-              }
             }
+
 
             //  else
 
@@ -301,7 +314,8 @@ namespace CHGame
             m_maximumTurn = 10;
             m_turnCounter = 0;
             player1Turn = true;
-             
+
+            m_totoalPointNum = m_levels[m_levelCounter].Points.Count;
 
             GameObject.Find("CurrentTurnNumber").GetComponent<Text>().text = m_turnCounter.ToString();
             GameObject.Find("MaximumTurnNumber").GetComponent<Text>().text = m_maximumTurn.ToString();
@@ -311,7 +325,7 @@ namespace CHGame
 
             PlayerScore[0] = 0f;
             PlayerScore[1] = 1f;
-           
+
 
         //Make vertex list
         //m_points = FindObjectsOfType<P2Point>().ToList();
@@ -332,6 +346,7 @@ namespace CHGame
         public void NextTurn()
         {
           m_turnCounter++;
+            operated = false;
 
             //Debug.Log(player1Turn);
 
@@ -357,7 +372,7 @@ namespace CHGame
             {
                     if (PlayerScore[0] == PlayerScore[1]) {
                         SceneManager.LoadScene(m_tie);
-                    }   
+                    }
                     else {
                         SceneManager.LoadScene(m_p2Victory);
                     }
@@ -368,16 +383,24 @@ namespace CHGame
           else
           {
               // clean selected point
-              m_selected_points.Clear();
+              foreach (P2Point point in m_selected_points) {
+                    point.selected = false;
+              }
+
+              foreach (P2Hull hull in m_selected_convexhulls)
+                {
+                    hull.selected = false;
+                }
+
+                m_selected_points.Clear();
               m_selected_convexhulls.Clear();
 
 
               // update player turn
-            
+
               m_GUIManager.OnTurnStart(player1Turn);
                 GameObject.Find("CurrentTurnNumber").GetComponent<Text>().text = m_turnCounter.ToString();
                 GameObject.Find("MaximumTurnNumber").GetComponent<Text>().text = m_maximumTurn.ToString();
-
 
 
             }
@@ -388,30 +411,35 @@ namespace CHGame
         public void Connect()
         {
 
-          // check validness (1) 2pts, (2) line segment not exist; (3) not crossed with existing segments (5) not intersecting existing polygon
-          if (m_selected_points.Count < 2) return;
-          var seg1 = new P2Segment(m_selected_points[0].Pos, m_selected_points[1].Pos, player1Turn);
-          var seg2 = new P2Segment(m_selected_points[0].Pos, m_selected_points[1].Pos, !player1Turn);
+            // check validness (1) 2pts, (2) line segment not exist; (3) not crossed with existing segments (5) not intersecting existing polygon
 
-          if (m_segments.Contains(seg1)) return;
-          if (m_segments.Contains(seg2)) return;
 
-          P2Segment seg = seg1;
+            if (m_selected_points.Count < 2) return;
+          var seg = new P2Segment(m_selected_points[0].Pos, m_selected_points[1].Pos, player1Turn);
+            var segLS = new LineSegment(m_selected_points[0].Pos, m_selected_points[1].Pos);
+
+
+            //Debug.Log(seg.Segment.Point1 + "," + seg.Segment.Point2);
+
+
+            if (m_segments.Contains(segLS)) return;
+
+
 
           foreach (P2Segment s in PlayerSegments[playerIndex])
             if (LineSegment.IntersectProper(s.Segment, seg.Segment) != null) return;
 
           if (SegIntersectPolygon(seg, playerIndex)) return;
 
-          //points on existing polygon cannot be selected.
-          //Some explanations: If we can select points on existing polygon, we need to deal with the case: one line segement connecting two polygon
-          //If we want to find a largest circle, this is NP-hard problem(Hamilton Cycle)
+            //points on existing polygon cannot be selected.
+            //Some explanations: If we can select points on existing polygon, we need to deal with the case: one line segement connecting two polygon
+            //If we want to find a largest circle, this is NP-hard problem(Hamilton Cycle)
 
 
 
 
-          //[option]TODO: show info about invalid selection
-
+            //[option]TODO: show info about invalid selection
+            operated = true;
 
           //add both vertices and segment to current player
           PlayerPoints[playerIndex].Add(seg.Segment.Point1);
@@ -419,7 +447,7 @@ namespace CHGame
           PlayerPoints[playerIndex] = PlayerPoints[playerIndex].Distinct().ToList();
 
           PlayerSegments[playerIndex].Add(seg);
-          m_segments.Add(seg);
+          m_segments.Add(segLS);
 
           //draw line segment,
           var mesh = Instantiate(PlayerLineMeshesPrefab[playerIndex], Vector3.forward, Quaternion.identity) as GameObject;
@@ -440,6 +468,8 @@ namespace CHGame
           P2Hull newpolygon = FindPolygon(playerIndex, seg.Segment.Point1);
 
           if (newpolygon != null) {
+
+                Debug.Log("Miao?!!!");
             PlayerPolygons[playerIndex].Add(newpolygon);
             UpdateMesh(newpolygon.hull, playerIndex);
 
@@ -478,8 +508,9 @@ namespace CHGame
             if (!hull.mergeChance) return;
           }
 
-          //TODO: compute new convex hull,  add new convex hull to current player, update score
+            //TODO: compute new convex hull,  add new convex hull to current player, update score
 
+            operated = true;
           Polygon2D newhull = ConvexHull.ComputeConvexHull(m_selected_convexhulls[0].hull, m_selected_convexhulls[1].hull);
 
           UpdateMesh(newhull, playerIndex);
@@ -525,10 +556,17 @@ namespace CHGame
         private P2Hull FindPolygon(int playerIndex, Vector2 startPoint){
 
 
-          //turn the set into nodelink list
           var edges = PlayerSegments[playerIndex];
           var points = PlayerPoints[playerIndex];
-          int[,] edgeList = new int[points.Count, points.Count];
+
+
+            //Debug.Log(edges.Count + " , "+ points.Count);
+
+            if (points.Count < 3) return null;
+
+
+            //turn the egdge set into nodelink list
+            int[,] edgeList = new int[points.Count, points.Count];
           int[] edgeNum  = new int[points.Count];
 
           foreach (P2Segment edge in edges) {
@@ -540,37 +578,50 @@ namespace CHGame
           }
 
           //DFS from startPoint to find cycle;
-          bool[] visited = new bool[points.Count];
-          int[] pre =new int[points.Count];
+          bool[] visited = new bool[m_totoalPointNum];
+          int[] pre =new int[m_totoalPointNum];
+          bool[,] edgeUsed = new bool[m_totoalPointNum, m_totoalPointNum];
+
           List<int> cycle = new List<int>();
 
 
-          for (var i = 0; i < points.Count; i++) {
+          for (var i = 0; i < m_totoalPointNum; i++) {
             visited[i] = false;
             pre[i] = -1;
-          }
+                for (int j = 0; j < m_totoalPointNum; j++) {
+                    edgeUsed[i, j] = false;
+                }
+            }
 
           int vi = points.IndexOf(startPoint);
 
           //There will be only one cycle created
 
-          if (DFS(vi, ref pre,ref visited, edgeList, edgeNum,ref cycle)) {
+          if (DFS(points.IndexOf(startPoint), points.IndexOf(startPoint), ref pre,ref visited, ref edgeUsed, edgeList, edgeNum,ref cycle)) {
+                Debug.Log("Cycle!!");
             List<Vector2> CyclePoints;
             CyclePoints = new List<Vector2>();
+
+
+                //Debug.Log(cycle.Count);
+
             foreach (var pointNum in cycle) {
               CyclePoints.Add(points[pointNum]);
             }
+
+
             //Copmute the Convex HUll
             Polygon2D newHull= ConvexHull.ComputeConvexHull(CyclePoints);
+                //Debug.Log("HullVNum: " + newHull.VertexCount);
             P2Hull nhull = new P2Hull
             {
                 hull = newHull
             };
 
-
             return nhull;
           }
-        else {
+            else
+            {
           return null;
         }
 
@@ -623,7 +674,7 @@ namespace CHGame
           Instantiate(PlayerPolygonMeshPrefab[playerIndex], PlayerPolygonMeshCollection[playerIndex].transform) as GameObject;
 
 
-        
+
         newPolygonInstance.transform.parent = PlayerPolygonMeshCollection[playerIndex].transform;
           PlayerPolygonMeshes[playerIndex].Add(newPolygonInstance);
 
@@ -634,32 +685,60 @@ namespace CHGame
           //TODO: add selected material
         }
 
-        bool  DFS(int current_point, ref int[] pre, ref bool[] visited,  int[,] edgeList, int[] edgeNum, ref List<int> cycle) {
-          if (visited[current_point]) {
+        bool  DFS(int current_point, int start_point, ref int[] pre, ref bool[] visited,  ref bool[,] edgeUsed, int[,] edgeList, int[] edgeNum, ref List<int> cycle) {
 
-              int v = current_point;
-              while (pre[v] != current_point) {
-                cycle.Add(v);
-                v = pre[v];
-              }
-            return true;
-          }
+            Debug.Log("current_point:" + current_point);
+            Debug.Log("edgeNum[current_point]" + edgeNum[current_point]);
 
-          for (int num = 0; num < edgeNum[current_point]; num++)
+            if (visited[current_point]) {
+                int i = current_point;
+                while ((pre[i] >= 0)  && (pre[i] != start_point)) {
+                    //Debug.Log(i);
+                    cycle.Add(i);
+                    i = pre[i];
+                }
+                cycle.Add(i);
+
+                if (pre[i] < 0)
+                {
+                    cycle.Clear();
+                    return false;
+                }
+                else
+                {
+                    //Debug.Log("find!!!");
+                    return true;
+                }
+            }
+
+            visited[current_point] = true;
+
+            for (int num = 0; num < edgeNum[current_point]; num++)
             {
                 int i = edgeList[current_point, num];
-                if (!visited[i]) {
-                  pre[i] = current_point;
-                  visited[i] = true;
-                  if (DFS(i, ref pre, ref visited, edgeList, edgeNum, ref cycle))
-                  {
-                    return true;
-                  }
-                  pre[i] = -1;
-                  visited[i] = false;
-                }
-          }
 
+                if (!edgeUsed[current_point, i])
+                {
+                    pre[i] = current_point;
+                    //visited[i] = true;
+                    edgeUsed[current_point, i] = true;
+                    edgeUsed[i, current_point] = true;
+
+
+                    if (DFS(i, start_point, ref pre, ref visited, ref edgeUsed, edgeList, edgeNum, ref cycle))
+                    {
+                        return true;
+                    }
+
+                    edgeUsed[current_point, i] = false;
+                    edgeUsed[i, current_point] = false;
+                    pre[i] = -1;
+                    //visited[i] = false;
+                }
+            }
+
+
+            visited[current_point] = false;
           return false;
         }
 
