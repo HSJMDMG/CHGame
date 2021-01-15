@@ -29,7 +29,7 @@ namespace CHGame
         {
             Pos = new Vector2(transform.position.x, transform.position.y);
             m_controller = FindObjectOfType<P2Controller>();
-          
+
             selected = false;
             spriteR = GetComponent<SpriteRenderer>();
             ownership = UNOWNED;

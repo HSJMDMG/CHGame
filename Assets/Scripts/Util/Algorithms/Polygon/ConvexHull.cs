@@ -12,6 +12,21 @@
     /// </summary>
     public static class ConvexHull
     {
+
+      /// <summary>
+      /// combine 2 convex hulls
+      /// </summary>
+      /// <param name="a_points"></param>
+      public static Polygon2D ComputeConvexHull(IPolygon2D polygon1, IPolygon2D polygon2)
+      {
+         //TODO: change to O(n) algorithm
+          List<Vector2> vl = new List<Vector2>();
+          foreach (var v in polygon1.Vertices) {vl.Add(v);}
+          foreach (var v in polygon2.Vertices) {vl.Add(v);}
+          return ComputeConvexHull(polygon1.Vertices);
+      }
+
+
         /// <summary>
         /// Does a simple graham scan.
         /// </summary>

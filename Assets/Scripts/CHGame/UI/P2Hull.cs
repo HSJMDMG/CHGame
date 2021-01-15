@@ -9,18 +9,13 @@ namespace CHGame
 
     public static class P2Hull
     {
+        public bool mergeChance = true;
+        public bool nested = false;
         Polygon2D hull;
-
-        public Sprite Player1HullMesh;
-        public Sprite Player1HullMesh;
-        public Sprite Player2HullMesh;
-        public bool selected;
-        public EOwnership ownership;
-        public bool canMerge = true;
-        private SpriteRenderer MeshR;
-        public bool belongToPlayer1;
-
+        MeshRenderer MeshR;
         private P2Controller m_controller;
+        bool selected;
+        public bool belongToPlayer1;
 
         private enum EOwnership
         {
@@ -38,28 +33,21 @@ namespace CHGame
               m_controller = FindObjectOfType<P2Controller>();
 
               selected = false;
-              MeshR = GetComponent<SpriteRenderer>();
+              MeshR = GetComponent<MeshRenderer>();
               ownership = UNOWNED;
           }
 
           void Update()
           {
 
+
             if (selected)
             {
-              if (belongToPlayer1)
-              {
-                spriteR.sprite = Player1HullMesh;
-              }
-              else
-              {
-                spriteR.sprite = Player2HullMesh;
-              }
-              //spriteR.sprite = selectedPointSprite;
+              MeshR.material = MeshR.materials[0];
             }
             else
             {
-              spriteR.sprite = originalHullMesh;
+              MeshR.material = MeshR.materials[1];
             }
 
             //TODO: render the convex hull with mesh

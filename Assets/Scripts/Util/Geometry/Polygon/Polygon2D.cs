@@ -217,6 +217,13 @@
             return true;
         }
 
+        public bool ContainsPolygon(Polygon2D a_polygon)
+        {
+          foreach(Vector2 v in a_polygon.Vertices) {
+            if (!m_vertices.Contains(v)) return false;
+          }
+          return true;
+        }
         public bool ContainsInside(Vector2 a_pos)
         {
             // cannot contain without area

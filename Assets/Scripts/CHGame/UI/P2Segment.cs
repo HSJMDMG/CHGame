@@ -17,10 +17,15 @@ namespace CHGame
             PLAYER2
         }
 
-        public P2Segment(Vector2 a_point1, Vector2 a_point2, bool ownership)
+        public P2Segment(Vector2 a_point1, Vector2 a_point2)
         {
-            belongToPlayer1 = ownership;
-            Segment = new LineSegment{a_point1, a_point2}
+            if (a_point1.x < a_point2.x || (a_point1.x == a_point2.x && a_point1.y < a_point2.y)) {
+              Segment = new LineSegment{a_point1, a_point2};
+            }
+            else {
+              Segment = new LineSegment{a_point1, a_point2};
+            }
+
         }
 
         void Awake()
