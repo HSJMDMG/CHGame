@@ -37,6 +37,7 @@ namespace CHGame
         // names of differnt victory scenes
         public string m_p1Victory;
         public string m_p2Victory;
+        public string m_tie;
 
         public P2GUIManager m_GUIManager;
         //public MeshFilter m_meshFilter;
@@ -49,6 +50,7 @@ namespace CHGame
         private int m_turnCounter;
         [SerializeField]
         private bool player1Turn;
+        [SerializeField]
         private int playerIndex;
 
         private float[] m_playerArea;
@@ -90,11 +92,17 @@ namespace CHGame
         private int[] PlayerPolygonId;
 
 
-        private GameObject[] PlayerPolygonMeshCollection; // Polygon Mesh Prefabs
-        internal GameObject[] lineMeshCollection; //line Mesh Prefabs
+        private GameObject[] PlayerPolygonMeshCollection; // 2 empty gameobject to hold polygon meshs
+        internal GameObject[] LineMeshCollection; //2 empty gameobject to hold line meshs
 
-        internal GameObject[] PlayerScoreText;
+
+        private GameObject[] PlayerScoreText;
+
+        [SerializeField]
+        private GameObject[] PlayerTurnPanel;
+
         internal float[] PlayerScore;
+
         // dcel
         // calculated after every turn
         private DCEL m_DCEL;
@@ -131,8 +139,10 @@ namespace CHGame
           player1Turn = true;
 
 
-          //initialize geometry lists for players
-          PlayerPolygons = new List<P2Hull>[2] {new List<P2Hull>(), new List<P2Hull>()};
+
+
+        //initialize geometry lists for players
+        PlayerPolygons = new List<P2Hull>[2] {new List<P2Hull>(), new List<P2Hull>()};
           PlayerPolygonId = new int[2] {0, 0};
           PlayerPoints = new List<Vector2>[2] {new List<Vector2>(), new List<Vector2>()};
           PlayerSegments = new List<P2Segment>[2]{new List<P2Segment>(), new List<P2Segment>()};
@@ -141,15 +151,19 @@ namespace CHGame
 
 
             //PlayerPolygonMeshPrefab = new GameObject[2];
-            PlayerPolygonMeshCollection = new GameObject[2] {GameObject.Find("Player1PolygonCollection"),GameObject.Find("Player2PolygonCollection")};
-          lineMeshCollection = new GameObject[2] {GameObject.Find("Player1LineCollection"),GameObject.Find("Player2LineCollection")};
+
+
+        PlayerPolygonMeshCollection = new GameObject[2] {GameObject.Find("Player1PolygonCollection"),GameObject.Find("Player2PolygonCollection")};
+        LineMeshCollection = new GameObject[2] {GameObject.Find("Player1LineCollection"),GameObject.Find("Player2LineCollection")};
 
           //initialize score panel
           PlayerScoreText = new GameObject[2] {GameObject.Find("P1Score"), GameObject.Find("P2Score")};
-          PlayerScore = new float[2];
+          PlayerScore = new float[2] { 0f, 0f};
 
+            //initialize turn panel
+            PlayerTurnPanel = new GameObject[2] { GameObject.Find("P1TurnPanel"), GameObject.Find("P2TurnPanel")};
 
-          InitLevel();
+            InitLevel();
 
         }
 
@@ -283,9 +297,25 @@ namespace CHGame
 
             m_pointSelection = false;
 
-            //Make vertex list
-            //m_points = FindObjectsOfType<P2Point>().ToList();
-        }
+
+            m_maximumTurn = 10;
+            m_turnCounter = 0;
+            player1Turn = true;
+             
+
+            GameObject.Find("CurrentTurnNumber").GetComponent<Text>().text = m_turnCounter.ToString();
+            GameObject.Find("MaximumTurnNumber").GetComponent<Text>().text = m_maximumTurn.ToString();
+
+            PlayerTurnPanel[0].SetActive(true);
+            PlayerTurnPanel[1].SetActive(false);
+
+            PlayerScore[0] = 0f;
+            PlayerScore[1] = 1f;
+           
+
+        //Make vertex list
+        //m_points = FindObjectsOfType<P2Point>().ToList();
+    }
 
 
         public void ShowHideTrapezoidMap()
@@ -302,18 +332,36 @@ namespace CHGame
         public void NextTurn()
         {
           m_turnCounter++;
-          player1Turn = !player1Turn;
+
+            //Debug.Log(player1Turn);
+
+            player1Turn = !player1Turn;
+            //Debug.Log(player1Turn);
+
           playerIndex = player1Turn ? 0 : 1;
+
+
+            PlayerTurnPanel[playerIndex].SetActive(true);
+            PlayerTurnPanel[1 - playerIndex].SetActive(false);
+
+
+
           //load victory scene
           if (m_turnCounter > m_maximumTurn)
           {
-            if (m_playerArea[0] > m_playerArea[1])
+            if (PlayerScore[0] > PlayerScore[1])
             {
                 SceneManager.LoadScene(m_p1Victory);
             }
             else
             {
-                SceneManager.LoadScene(m_p2Victory);
+                    if (PlayerScore[0] == PlayerScore[1]) {
+                        SceneManager.LoadScene(m_tie);
+                    }   
+                    else {
+                        SceneManager.LoadScene(m_p2Victory);
+                    }
+
             }
           }
           // load victory if screen clicked after every player has taken turn
@@ -325,9 +373,14 @@ namespace CHGame
 
 
               // update player turn
-              player1Turn = !player1Turn;
+            
               m_GUIManager.OnTurnStart(player1Turn);
-          }
+                GameObject.Find("CurrentTurnNumber").GetComponent<Text>().text = m_turnCounter.ToString();
+                GameObject.Find("MaximumTurnNumber").GetComponent<Text>().text = m_maximumTurn.ToString();
+
+
+
+            }
 
 
         }
@@ -370,7 +423,7 @@ namespace CHGame
 
           //draw line segment,
           var mesh = Instantiate(PlayerLineMeshesPrefab[playerIndex], Vector3.forward, Quaternion.identity) as GameObject;
-          mesh.transform.parent = this.transform;
+          mesh.transform.parent = LineMeshCollection[playerIndex].transform;
           mesh.GetComponent<P2Segment>().CopySegment(seg);
 
           instantObjects.Add(mesh);
@@ -569,6 +622,9 @@ namespace CHGame
           var newPolygonInstance =
           Instantiate(PlayerPolygonMeshPrefab[playerIndex], PlayerPolygonMeshCollection[playerIndex].transform) as GameObject;
 
+
+        
+        newPolygonInstance.transform.parent = PlayerPolygonMeshCollection[playerIndex].transform;
           PlayerPolygonMeshes[playerIndex].Add(newPolygonInstance);
 
           newPolygonInstance.GetComponent<MeshFilter>().mesh = mesh;
