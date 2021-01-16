@@ -627,6 +627,17 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 8449920575162633577, guid: bf2819fd65c63499bb1cc6681916ef67,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300052, guid: f6e67370734717c4d8c308231a761fda,
+        type: 3}
+    - target: {fileID: 8449920575162633577, guid: bf2819fd65c63499bb1cc6681916ef67,
+        type: 3}
+      propertyPath: m_Type
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf2819fd65c63499bb1cc6681916ef67, type: 3}
 --- !u!224 &1093176447 stripped
@@ -827,9 +838,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11497240, guid: 5bf2b46499c5a4b9490e088a2b964638, type: 3}
       propertyPath: m_Text
-      value: 'This is the control texts for 1-Player Mode
-
-        how to operate.'
+      value: On the map, the places which could be built as the castles and the number
+        of selection will be given. Without selection, the place will be a wasteland,
+        and after selection, a castle will be constructed. If you re-click the castle
+        you select, then the selection will be cancelled and the castle will be dissmantled.
+        When the number of selection is over 3, the castles will be connected automatically.
+        Once your score meet the requirement, you could go to the next. If you do
+        not have any idea, you can click hint button. You can do it, and do not use
+        hint frequently.
       objectReference: {fileID: 0}
     - target: {fileID: 22485368, guid: 5bf2b46499c5a4b9490e088a2b964638, type: 3}
       propertyPath: m_LocalPosition.x
