@@ -131,7 +131,6 @@ namespace CHGame
         public void InitLevel()
         {
 
-
             if (m_levelCounter >= m_levels.Count)
             {
                 SceneManager.LoadScene(m_victoryScene);
@@ -173,7 +172,7 @@ namespace CHGame
             var convexhulltemp = ConvexHull.ComputeConvexHull(m_points.Select(v => v.Pos));
             m_pointNumberLimit = Random.Range(3, convexhulltemp.VertexCount + 1);
             if (m_pointNumberLimit < 3) m_pointNumberLimit = 3;
-            
+
             // set selected number panel
             GameObject.Find("MaximumNumber").GetComponent<Text>().text = m_pointNumberLimit.ToString();
             GameObject.Find("SelectedNumber").GetComponent<Text>().text = "0";
@@ -257,7 +256,6 @@ namespace CHGame
             }
 
 
-            //TODO: add solution rating information (both UI/Scence) (show a text, make life easier)
 
 
 

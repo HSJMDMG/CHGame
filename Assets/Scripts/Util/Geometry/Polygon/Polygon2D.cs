@@ -15,7 +15,7 @@
     public class Polygon2D : IPolygon2D
     {
         private LinkedList<Vector2> m_vertices;
-
+        private bool mergeChance;
         // some cache variables for speedup
         private List<LineSegment> m_segments;
         private float m_area = -1f;
@@ -190,7 +190,7 @@
 
             if (VertexCount < 3)
             {
-                throw new GeomException("Being convex is illdefined for polygons of 2 or less vertices");
+                throw new GeomException("Being convex is illdefined for polygons of 2 or less vertices: " + VertexCount);
             }
 
             // flip orientation if polygon counter clockwise
@@ -217,6 +217,13 @@
             return true;
         }
 
+        public bool ContainsPolygon(Polygon2D a_polygon)
+        {
+          foreach(Vector2 v in a_polygon.Vertices) {
+            if (!m_vertices.Contains(v)) return false;
+          }
+          return true;
+        }
         public bool ContainsInside(Vector2 a_pos)
         {
             // cannot contain without area
