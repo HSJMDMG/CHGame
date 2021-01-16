@@ -42,17 +42,22 @@ namespace CHGame
 
         void Update()
         {
+            if (m_controller != null) {
 
-            if (selected)
-            {
-                MeshR.material = selectedMaterial;
-                if (!m_controller.m_selected_convexhulls.Contains(gameObject)) { m_controller.m_selected_convexhulls.Add(gameObject); }
 
-            }
-            else
-            {
-                MeshR.material = originalMaterial;
-                if (m_controller.m_selected_convexhulls.Contains(gameObject)) { m_controller.m_selected_convexhulls.Remove(gameObject); }
+                if (selected)
+                {
+                    MeshR.material = selectedMaterial;
+                    if (!m_controller.m_selected_convexhulls.Contains(gameObject)) { m_controller.m_selected_convexhulls.Add(gameObject); }
+
+                }
+                else
+                {
+                    MeshR.material = originalMaterial;
+                    if (m_controller.m_selected_convexhulls.Contains(gameObject)) { m_controller.m_selected_convexhulls.Remove(gameObject); }
+                }
+
+
             }
 
         }

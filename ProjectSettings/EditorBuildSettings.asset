@@ -21,6 +21,15 @@ EditorBuildSettings:
     path: Assets/CHGame/Scences/P1Mode/P1Controls.unity
     guid: 2453d67034e7b44a98a287b7c15e85e9
   - enabled: 1
+    path: Assets/CHGame/Scences/P1Mode/P1AreaGame.unity
+    guid: bf2d471a940c64fffb2397b7ddf225bc
+  - enabled: 1
+    path: Assets/CHGame/Scences/P1Mode/P1Victory.unity
+    guid: d4cb02593fd964aa28f5184cde1618ba
+  - enabled: 1
+    path: Assets/CHGame/Scences/P1Mode/P1PointsGame.unity
+    guid: 9486b664cad24420f9b7e2680938ebd6
+  - enabled: 1
     path: Assets/CHGame/Scences/P2Mode/P2Menu.unity
     guid: 69916466a34074f20a07810bcf2d2dd4
   - enabled: 1
@@ -30,12 +39,15 @@ EditorBuildSettings:
     path: Assets/CHGame/Scences/P2Mode/P2Controls.unity
     guid: bb9f3d6c7abbd4fd7923b899d015d74e
   - enabled: 1
-    path: Assets/CHGame/Scences/P1Mode/P1AreaGame.unity
-    guid: bf2d471a940c64fffb2397b7ddf225bc
+    path: Assets/CHGame/Scences/P2Mode/P2Game.unity
+    guid: e82d8a1ed492f43bba581a86c0d22234
   - enabled: 1
-    path: Assets/CHGame/Scences/P1Mode/P1Victory.unity
-    guid: d4cb02593fd964aa28f5184cde1618ba
+    path: Assets/CHGame/Scences/P2Mode/P2Tie.unity
+    guid: 73180b1880b0e4eebbe56ee8a28911d7
   - enabled: 1
-    path: Assets/CHGame/Scences/P1Mode/P1PointsGame.unity
-    guid: 9486b664cad24420f9b7e2680938ebd6
+    path: Assets/CHGame/Scences/P2Mode/P2Victory1.unity
+    guid: c69d2d8a1c3104b268362cc64a4ec33f
+  - enabled: 1
+    path: Assets/CHGame/Scences/P2Mode/P2Victory2.unity
+    guid: 6805e780413ab474484914ac5fe1ba8d
   m_configObjects: {}

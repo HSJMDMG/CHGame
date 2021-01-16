@@ -8,12 +8,12 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8139912144618445999}
-  - component: {fileID: 8139912144618445998}
-  - component: {fileID: 8139912144618445993}
-  - component: {fileID: 8139912144618445992}
-  - component: {fileID: 8139912144618445997}
-  - component: {fileID: 8139912144618445996}
+  - component: {fileID: 4213869513160886}
+  - component: {fileID: 114299410303220112}
+  - component: {fileID: 114251321652726678}
+  - component: {fileID: 33406087021677616}
+  - component: {fileID: 23539998250152752}
+  - component: {fileID: 64248833805585588}
   m_Layer: 0
   m_Name: UserMesh
   m_TagString: Untagged
@@ -21,7 +21,7 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8139912144618445999
+--- !u!4 &4213869513160886
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -35,7 +35,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-
 --- !u!114 &114299410303220112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,24 +62,20 @@ MonoBehaviour:
   repeatDistance: 5
   widthmodifier: 0.3
 --- !u!33 &33406087021677616
-
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-
   m_GameObject: {fileID: 1198293507342324}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &23539998250152752
-
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1198293507342324}
-
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -89,9 +84,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
-
   m_RenderingLayerMask: 4294967295
-
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 611eaec2adf16564eba474be5cb51313, type: 2}
@@ -106,7 +99,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -115,17 +108,13 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-
 --- !u!64 &64248833805585588
-
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-
   m_GameObject: {fileID: 1198293507342324}
-
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
