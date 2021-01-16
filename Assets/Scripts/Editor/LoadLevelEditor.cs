@@ -59,6 +59,10 @@ public class LoadLevelEditor : ScriptedImporter
         {
             obj = LoadP1PtsLevel(fileSelected, name);
         }
+        else if (name.StartsWith("P2Level"))
+        {
+            obj = LoadP2Level(fileSelected, name);
+        }
         else
         {
             // no file name match
@@ -377,6 +381,29 @@ public class LoadLevelEditor : ScriptedImporter
         return asset;
     }
 
+    private UnityEngine.Object LoadP2Level(XElement fileSelected, string name)
+    {
+        // create the output scriptable object
+        var asset = ScriptableObject.CreateInstance<P2Level>();
+
+        // retrieve page data from .ipe file
+        var items = fileSelected.Descendants("page").First().Descendants("use");
+
+        // get marker data into respective vector list
+        asset.Points.AddRange(GetMarkers(items, "disk"));
+
+        // normalize coordinates
+        var rect = BoundingBoxComputer.FromPoints(asset.Points);
+        asset.Points = Normalize(rect, ktSIZE, asset.Points);
+
+        // give warning if no relevant data found
+        if (asset.Points.Count == 0)
+        {
+            EditorUtility.DisplayDialog("Warning", "File does not contain any points.", "OK");
+        }
+
+        return asset;
+    }
 
 
     /// <summary>
