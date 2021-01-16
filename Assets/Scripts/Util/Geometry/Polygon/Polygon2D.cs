@@ -190,7 +190,7 @@
 
             if (VertexCount < 3)
             {
-                throw new GeomException("Being convex is illdefined for polygons of 2 or less vertices");
+                throw new GeomException("Being convex is illdefined for polygons of 2 or less vertices: " + VertexCount);
             }
 
             // flip orientation if polygon counter clockwise

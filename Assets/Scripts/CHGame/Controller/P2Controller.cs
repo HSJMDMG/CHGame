@@ -49,7 +49,7 @@ namespace CHGame
         [SerializeField]
         private int m_turnCounter;
         [SerializeField]
-        private bool player1Turn;
+        internal bool player1Turn;
         [SerializeField]
         internal int playerIndex;
 
@@ -356,7 +356,7 @@ namespace CHGame
               Debug.Log("index in oncanvas(): " + index);
               np.AddVertex(m_canvas_points[index]);
             }
-            Debug.Log("tot v in oncanvas(): " + np.VertexCount);
+
             return np;
         }
 
@@ -524,10 +524,10 @@ namespace CHGame
             {
                 int i = PlayerPolygons[1 - playerIndex].IndexOf(polygon);
 
-                Debug.Log("Polygon in oppo: " + polygon.VertexCount);
-                Debug.Log("Polygon in oppo: " + newpolygon.VertexCount);
+                Debug.Log("Polygon in oppo1: " + PolygonOnCanvas(polygon).VertexCount);
+                Debug.Log("Polygon in oppo2: " + PolygonOnCanvas(newpolygon).VertexCount);
 
-                if (Intersector.IntersectConvex(PolygonOnCanvas(polygon), PolygonOnCanvas(newpolygon)) != null) {
+                if (Intersector.ifIntersect(PolygonOnCanvas(polygon), PolygonOnCanvas(newpolygon)) ) {
                 PlayerPolygonObjects[1 - playerIndex][i].GetComponent<P2Hull>().mergeChance = false;
               }
             }
@@ -585,7 +585,7 @@ namespace CHGame
           {
               int i = PlayerPolygons[1 - playerIndex].IndexOf(polygon);
 
-              if (Intersector.IntersectConvex(PolygonOnCanvas(polygon), PolygonOnCanvas(newhull)) != null) {
+              if (Intersector.ifIntersect(PolygonOnCanvas(polygon), PolygonOnCanvas(newhull))) {
               PlayerPolygonObjects[1 - playerIndex][i].GetComponent<P2Hull>().mergeChance = false;
             }
           }
@@ -741,6 +741,7 @@ namespace CHGame
           newPolygonInstance.GetComponent<MeshCollider>().sharedMesh = mesh;
           newPolygonInstance.GetComponent<P2Hull>().hull = Hull;
           newPolygonInstance.GetComponent<P2Hull>().mergeChance = canMerge;
+          newPolygonInstance.GetComponent<P2Hull>().belongToPlayer1 = player1Turn;
 
           PlayerPolygonObjects[playerIndex].Add(newPolygonInstance);
 

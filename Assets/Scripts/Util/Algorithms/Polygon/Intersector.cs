@@ -46,5 +46,35 @@
 
             return null;
         }
+
+
+        /// <summary>
+        /// check if intersect
+        /// </summary>
+        /// <param name="a_poly1"></param>
+        /// <param name="a_poly2"></param>
+        /// <returns></returns>
+
+        public static bool ifIntersect(Polygon2D a_poly1, Polygon2D a_poly2)
+        {
+            if (!(a_poly1.IsConvex()))
+            {
+                throw new GeomException("Method not defined for nonconvex polygons" + a_poly1);
+            }
+            if (!(a_poly2.IsConvex()))
+            {
+                throw new GeomException("Method not defined for nonconvex polygons" + a_poly2);
+            }
+
+            // obtain vertices that lie inside both polygons
+            var resultVertices = a_poly1.Vertices
+                .Where(v => a_poly2.ContainsInside(v))
+                .Concat(a_poly2.Vertices.Where(v => a_poly1.ContainsInside(v)))
+                .ToList();
+
+            Debug.Log("result Vertices in Intersector: " + resultVertices.Count);
+
+            return (resultVertices.Count > 0);
+        }
     }
 }

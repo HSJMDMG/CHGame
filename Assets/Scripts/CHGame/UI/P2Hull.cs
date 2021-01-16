@@ -91,7 +91,7 @@ namespace CHGame
         void OnMouseUpAsButton()
         {
             //Debug.Log("Hey On Mouse click");
-            if (mergeChance)
+            if (mergeChance && (m_controller.player1Turn == belongToPlayer1))
               selected = !selected;
 
         }
