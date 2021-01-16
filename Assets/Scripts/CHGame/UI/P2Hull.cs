@@ -68,7 +68,7 @@ namespace CHGame
         {
 
 
-            Debug.Log("Enter!!");
+            //Debug.Log("Enter!!");
             m_controller.m_hullSelection = true;
             m_controller.m_current_hull = gameObject;
 
@@ -90,8 +90,9 @@ namespace CHGame
 
         void OnMouseUpAsButton()
         {
-            Debug.Log("Hey On Mouse click");
-            selected = !selected;
+            //Debug.Log("Hey On Mouse click");
+            if (mergeChance)
+              selected = !selected;
 
         }
 

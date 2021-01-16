@@ -23,7 +23,7 @@
           List<Vector2> vl = new List<Vector2>();
           foreach (var v in polygon1.Vertices) {vl.Add(v);}
           foreach (var v in polygon2.Vertices) {vl.Add(v);}
-          return ComputeConvexHull(polygon1.Vertices);
+          return ComputeConvexHull(vl);
       }
 
 
