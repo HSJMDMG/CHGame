@@ -155,7 +155,7 @@ namespace CHGame
             epsilon = 0.2f;
 
           //counter
-          m_maximumTurn = 20;
+          m_maximumTurn = 50;
           m_turnCounter = 0;
           player1Turn = true;
 
@@ -327,7 +327,7 @@ namespace CHGame
 
             m_points = m_levels[m_levelCounter].Points;
 
-            m_maximumTurn = 20;
+            m_maximumTurn = 50;
             m_turnCounter = 0;
             player1Turn = true;
 
@@ -340,7 +340,7 @@ namespace CHGame
             PlayerTurnPanel[1].SetActive(false);
 
             PlayerScore[0] = 0f;
-            PlayerScore[1] = 1f;
+            PlayerScore[1] = 0f;
 
 
         //Make vertex list
@@ -353,9 +353,10 @@ namespace CHGame
             var np = new Polygon2D();
             foreach (var v in p.Vertices) {
               int index = m_points.IndexOf(v);
+              Debug.Log("index in oncanvas(): " + index);
               np.AddVertex(m_canvas_points[index]);
             }
-
+            Debug.Log("tot v in oncanvas(): " + np.VertexCount);
             return np;
         }
 
@@ -523,6 +524,9 @@ namespace CHGame
             {
                 int i = PlayerPolygons[1 - playerIndex].IndexOf(polygon);
 
+                Debug.Log("Polygon in oppo: " + polygon.VertexCount);
+                Debug.Log("Polygon in oppo: " + newpolygon.VertexCount);
+
                 if (Intersector.IntersectConvex(PolygonOnCanvas(polygon), PolygonOnCanvas(newpolygon)) != null) {
                 PlayerPolygonObjects[1 - playerIndex][i].GetComponent<P2Hull>().mergeChance = false;
               }
@@ -588,6 +592,10 @@ namespace CHGame
 
           UpdateMesh(newhull, playerIndex, false);
 
+
+          if (newhull.VertexCount > 0) {
+            PlayerScore[playerIndex] += newhull.Area;
+          }
           UpdateScore();
 
 
@@ -615,10 +623,7 @@ namespace CHGame
           var edges = PlayerSegments[playerIndex];
           var points = PlayerPoints[playerIndex];
 
-
-            //Debug.Log(edges.Count + " , "+ points.Count);
-
-            if (points.Count < 3) return null;
+          if (points.Count < 3) return null;
 
 
             //turn the egdge set into nodelink list
@@ -754,7 +759,7 @@ namespace CHGame
 
                 int i = current_point;
                 while ((pre[i] >= 0)  && (pre[i] != current_point)) {
-                    //Debug.Log(i);
+                    Debug.Log(i);
                     cycle.Add(i);
                     i = pre[i];
                 }
