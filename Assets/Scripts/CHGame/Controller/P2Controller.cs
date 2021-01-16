@@ -51,7 +51,7 @@ namespace CHGame
         [SerializeField]
         private bool player1Turn;
         [SerializeField]
-        private int playerIndex;
+        internal int playerIndex;
 
         private float[] m_playerArea;
 
@@ -63,7 +63,9 @@ namespace CHGame
 
         //TODO: UPDATE m-points, m-segments;
         [SerializeField]
-        private List<P2Point> m_points;
+        private List<Vector2> m_points;
+        [SerializeField]
+        private List<Vector2> m_canvas_points;
 
         [SerializeField]
         //m_segments only contains coordinates;
@@ -74,7 +76,7 @@ namespace CHGame
         [SerializeField]
         private List<P2Point> m_selected_points;
         [SerializeField]
-        private List<GameObject> m_selected_convexhulls;
+        internal List<GameObject> m_selected_convexhulls;
 
         internal bool m_pointSelection;
         internal bool m_hullSelection;
@@ -87,13 +89,18 @@ namespace CHGame
 
         public int m_totoalPointNum;
 
-        private List<Polygon2D>[] PlayerPolygons;
+        [SerializeField]
+        internal List<Polygon2D>[] PlayerPolygons;
+        internal List<Polygon2D>[] CanvasPlayerPolygons;
+
 
         [SerializeField]
         public List<Vector2>[] PlayerPoints;
         [SerializeField]
         private List<P2Segment>[] PlayerSegments;
-        private List<GameObject>[] PlayerPolygonObjects;
+        [SerializeField]
+        private List<GameObject> PlayerPointsObject;
+        internal List<GameObject>[] PlayerPolygonObjects;
         private List<GameObject>[] PlayerLineMeshes;
         private int[] PlayerPolygonId;
 
@@ -131,7 +138,7 @@ namespace CHGame
         public void Start()
         {
 
-          m_points = new List<P2Point>();
+          m_points = new List<Vector2>();
             m_segments = new HashSet<LineSegment>();
           instantObjects = new List<GameObject>();
 
@@ -150,30 +157,34 @@ namespace CHGame
             operated = false;
 
 
-        //initialize geometry lists for players
-        PlayerPolygons = new List<Polygon2D>[2] {new List<Polygon2D>(), new List<Polygon2D>()};
-        PlayerPolygonId = new int[2] {0, 0};
-        PlayerPoints = new List<Vector2>[2] {new List<Vector2>(), new List<Vector2>()};
-        PlayerSegments = new List<P2Segment>[2]{new List<P2Segment>(), new List<P2Segment>()};
-        PlayerPolygonObjects = new List<GameObject>[2] {new List<GameObject>(), new List<GameObject>()};
-        PlayerLineMeshes = new List<GameObject>[2] { new List<GameObject>(), new List<GameObject>() };
+            //initialize geometry lists for players
+          PlayerPolygons = new List<Polygon2D>[2] {new List<Polygon2D>(), new List<Polygon2D>()};
+          CanvasPlayerPolygons = new List<Polygon2D>[2] {new List<Polygon2D>(), new List<Polygon2D>()};
+
+          PlayerPolygonId = new int[2] {0, 0};
+          PlayerPoints = new List<Vector2>[2] {new List<Vector2>(), new List<Vector2>()};
+          PlayerSegments = new List<P2Segment>[2]{new List<P2Segment>(), new List<P2Segment>()};
+
+          PlayerPointsObject = new List<GameObject>();
+          PlayerPolygonObjects = new List<GameObject>[2] {new List<GameObject>(), new List<GameObject>()};
+          PlayerLineMeshes = new List<GameObject>[2] { new List<GameObject>(), new List<GameObject>() };
 
 
 
-            //PlayerPolygonMeshPrefab = new GameObject[2];
+              //PlayerPolygonMeshPrefab = new GameObject[2];
 
 
-        PlayerPolygonMeshCollection = new GameObject[2] {GameObject.Find("Player1PolygonCollection"),GameObject.Find("Player2PolygonCollection")};
-        LineMeshCollection = new GameObject[2] {GameObject.Find("Player1LineCollection"),GameObject.Find("Player2LineCollection")};
+          PlayerPolygonMeshCollection = new GameObject[2] {GameObject.Find("Player1PolygonCollection"),GameObject.Find("Player2PolygonCollection")};
+          LineMeshCollection = new GameObject[2] {GameObject.Find("Player1LineCollection"),GameObject.Find("Player2LineCollection")};
 
-          //initialize score panel
-          PlayerScoreText = new GameObject[2] {GameObject.Find("P1Score"), GameObject.Find("P2Score")};
-          PlayerScore = new float[2] { 0f, 0f};
+            //initialize score panel
+            PlayerScoreText = new GameObject[2] {GameObject.Find("P1Score"), GameObject.Find("P2Score")};
+            PlayerScore = new float[2] { 0f, 0f};
 
-            //initialize turn panel
-            PlayerTurnPanel = new GameObject[2] { GameObject.Find("P1TurnPanel"), GameObject.Find("P2TurnPanel")};
+              //initialize turn panel
+              PlayerTurnPanel = new GameObject[2] { GameObject.Find("P1TurnPanel"), GameObject.Find("P2TurnPanel")};
 
-            InitLevel();
+              InitLevel();
 
         }
 
@@ -188,7 +199,7 @@ namespace CHGame
             */
 
 
-           
+
             if (!operated) {
 
                 //add point listener
@@ -229,12 +240,16 @@ namespace CHGame
 
                 if (Input.GetMouseButton(0))
                 {
-                    //brute force
-                    foreach (Polygon2D p in PlayerPolygons[playerIndex])
-                    {
-                        int i = PlayerPolygons[playerIndex].IndexOf(p);
+                    Vector2 pos = Input.mousePosition;
 
-                        if (p.Contains(Input.mousePosition))
+                    //Debug.Log("Point Location for Polygon!!!");
+                    //Debug.Log(pos);
+                    //brute force
+                    foreach (Polygon2D p in CanvasPlayerPolygons[playerIndex])
+                    {
+                        int i = CanvasPlayerPolygons[playerIndex].IndexOf(p);
+
+                        if (p.Contains(pos))
                         {
                             m_current_hull = PlayerPolygonObjects[playerIndex][i];
 
@@ -268,7 +283,7 @@ namespace CHGame
 
 
 
-    
+
 
 
 
@@ -291,12 +306,16 @@ namespace CHGame
 
               var obj = Instantiate(PointPrefab, point, Quaternion.identity) as GameObject;
               obj.transform.parent = GameObject.Find("PointCollection").transform;
+              PlayerPointsObject.Add(obj);
+              m_canvas_points.Add(new Vector2(obj.transform.position.x, obj.transform.position.y));
+
               instantObjects.Add(obj);
 
             }
 
             m_pointSelection = false;
 
+            m_points = m_levels[m_levelCounter].Points;
 
             m_maximumTurn = 10;
             m_turnCounter = 0;
@@ -318,6 +337,17 @@ namespace CHGame
         //m_points = FindObjectsOfType<P2Point>().ToList();
     }
 
+
+        public Polygon2D PolygonOnCanvas(Polygon2D p) {
+
+            var np = new Polygon2D();
+            foreach (var v in p.Vertices) {
+              int index = m_points.IndexOf(v);
+              np.AddVertex(m_canvas_points[index]);
+            }
+
+            return np;
+        }
 
         public void ShowHideTrapezoidMap()
         {
@@ -454,11 +484,24 @@ namespace CHGame
 
           Polygon2D newpolygon = FindPolygon(playerIndex, seg.Segment.Point1);
 
+
+
+
           if (newpolygon != null) {
 
-                Debug.Log("Miao?!!!");
+
             PlayerPolygons[playerIndex].Add(newpolygon);
-            UpdateMesh(newpolygon, playerIndex, true);
+            CanvasPlayerPolygons[playerIndex].Add(PolygonOnCanvas(newpolygon));
+
+
+                string printtext = "";
+                foreach (var v in newpolygon.Vertices) {
+                    printtext += "(" + v.x + "," + v.y + ")  ";
+                }
+
+                Debug.Log(printtext);
+
+                UpdateMesh(newpolygon, playerIndex, true);
 
             if (newpolygon.VertexCount > 0) {
               PlayerScore[playerIndex] += newpolygon.Area;
@@ -469,8 +512,8 @@ namespace CHGame
             foreach (Polygon2D polygon in PlayerPolygons[1 - playerIndex])
             {
                 int i = PlayerPolygons[1 - playerIndex].IndexOf(polygon);
-                
-                if (Intersector.IntersectConvex(polygon, newpolygon) != null) {
+
+                if (Intersector.IntersectConvex(PolygonOnCanvas(polygon), PolygonOnCanvas(newpolygon)) != null) {
                 PlayerPolygonObjects[1 - playerIndex][i].GetComponent<P2Hull>().mergeChance = false;
               }
             }
@@ -506,6 +549,7 @@ namespace CHGame
           PlayerScore[playerIndex] += newhull.Area;
 
           PlayerPolygons[playerIndex].Add(newhull);
+          CanvasPlayerPolygons[playerIndex].Add(PolygonOnCanvas(newhull));
 
           foreach (var v in newhull.Vertices) {
             PlayerPoints[playerIndex].Add(v);
@@ -582,7 +626,7 @@ namespace CHGame
           //There will be only one cycle created
 
           if (DFS(points.IndexOf(startPoint), points.IndexOf(startPoint), ref pre,ref visited, ref edgeUsed, edgeList, edgeNum,ref cycle)) {
-                Debug.Log("Cycle!!");
+                //Debug.Log("Cycle!!");
             List<Vector2> CyclePoints;
             CyclePoints = new List<Vector2>();
 
@@ -658,6 +702,7 @@ namespace CHGame
 
           newPolygonInstance.transform.parent = PlayerPolygonMeshCollection[playerIndex].transform;
           newPolygonInstance.GetComponent<MeshFilter>().mesh = mesh;
+          newPolygonInstance.GetComponent<MeshCollider>().sharedMesh = mesh;
           newPolygonInstance.GetComponent<P2Hull>().hull = Hull;
           newPolygonInstance.GetComponent<P2Hull>().mergeChance = canMerge;
 
@@ -669,8 +714,8 @@ namespace CHGame
 
         bool  DFS(int current_point, int start_point, ref int[] pre, ref bool[] visited,  ref bool[,] edgeUsed, int[,] edgeList, int[] edgeNum, ref List<int> cycle) {
 
-            Debug.Log("current_point:" + current_point);
-            Debug.Log("edgeNum[current_point]" + edgeNum[current_point]);
+          //  Debug.Log("current_point:" + current_point);
+            //Debug.Log("edgeNum[current_point]" + edgeNum[current_point]);
 
             if (visited[current_point]) {
                 int i = current_point;

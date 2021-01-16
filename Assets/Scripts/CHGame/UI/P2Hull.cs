@@ -14,7 +14,7 @@ namespace CHGame
         public Polygon2D hull;
         public MeshRenderer MeshR;
         private P2Controller m_controller;
-        public  bool selected;
+        public bool selected;
         public bool belongToPlayer1;
         public Material selectedMaterial;
         public Material originalMaterial;
@@ -46,10 +46,13 @@ namespace CHGame
             if (selected)
             {
                 MeshR.material = selectedMaterial;
+                if (!m_controller.m_selected_convexhulls.Contains(gameObject)) { m_controller.m_selected_convexhulls.Add(gameObject); }
+
             }
             else
             {
                 MeshR.material = originalMaterial;
+                if (m_controller.m_selected_convexhulls.Contains(gameObject)) { m_controller.m_selected_convexhulls.Remove(gameObject); }
             }
 
         }
@@ -65,6 +68,7 @@ namespace CHGame
         {
 
 
+            Debug.Log("Enter!!");
             m_controller.m_hullSelection = true;
             m_controller.m_current_hull = gameObject;
 
@@ -83,5 +87,13 @@ namespace CHGame
             //var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition + 10 * Vector3.forward);
             //m_controller.m_line.SetPosition(1, pos);
         }
+
+        void OnMouseUpAsButton()
+        {
+            Debug.Log("Hey On Mouse click");
+            selected = !selected;
+
+        }
+
     }
 }

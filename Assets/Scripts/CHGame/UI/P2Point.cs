@@ -66,7 +66,7 @@ namespace CHGame
         void OnMouseEnter()
         {
 
-
+            //Debug.Log("enter point");
             m_controller.m_pointSelection = true;
             m_controller.m_current_point = this;
 
