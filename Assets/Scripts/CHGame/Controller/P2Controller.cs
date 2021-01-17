@@ -398,8 +398,8 @@ namespace CHGame
             }
             else
             {
-                    if (PlayerScore[0] == PlayerScore[1]) {
-                        SceneManager.LoadScene(m_tie);
+                    if (Math.Abs(PlayerScore[0]-PlayerScore[1]) <= 0.000001) {
+                        SceneManager.LoadScene(m_p2Victory);
                     }
                     else {
                         SceneManager.LoadScene(m_p2Victory);
