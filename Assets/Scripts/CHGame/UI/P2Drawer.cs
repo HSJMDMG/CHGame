@@ -1,21 +1,29 @@
 ﻿namespace CHGame
 {
     using UnityEngine;
+    using Util.Geometry;
+    using Util.Geometry.Trapezoid;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Util.Algorithms.Triangulation;
     using Util.Geometry.Triangulation;
+    using Util.Math;
 
     /// <summary>
     /// Static class responsible for displaying trapezoid decomposition
     /// </summary>
-    public static class TrapezoidDrawer
+    public class P2Drawer
     {
         // toggle variables for displaying trapezoid map edges
-        public static bool EdgesOn { get; set; }
+        public  bool EdgesOn { get; set; }
 
 
         // line material for Unity shader
-        private static Material m_lineMaterial;
+        private  Material m_lineMaterial;
 
-        public static void CreateLineMaterial()
+        public void CreateLineMaterial()
         {
             // Unity has a built-in shader that is useful for drawing
             // simple colored things.
@@ -41,23 +49,18 @@
         /// <summary>
         /// Draw edges of Trapezoid Decomposition
         /// </summary>
-        /// <param name="m_Delaunay"></param>
-        private static void DrawEdges(Triangulation m_Delaunay)
+        /// <param name="m_Trapezoid"></param>
+        private  void DrawEdges(List<LineSegment> VerticalLines)
         {
             GL.Begin(GL.LINES);
             GL.Color(Color.green);
 
-            foreach (var halfEdge in m_Delaunay.Edges)
+            Debug.Log("Hey!");
+            foreach (var line in VerticalLines)
             {
-                // dont draw edges to outer vertices
-                if (m_Delaunay.ContainsInitialPoint(halfEdge.T))
-                {
-                    continue;
-                }
-
-                // draw edge
-                GL.Vertex3(halfEdge.Point1.x, 0, halfEdge.Point1.y);
-                GL.Vertex3(halfEdge.Point2.x, 0, halfEdge.Point2.y);
+                // draw line
+                GL.Vertex3(line.Point1.x, line.Point1.y, 1);
+                GL.Vertex3(line.Point2.x, line.Point2.y, 1);
             }
 
             GL.End();
@@ -68,13 +71,14 @@
         /// <summary>
         /// Main drawing function that calls other auxiliary functions.
         /// </summary>
-        /// <param name="m_Delaunay"></param>
-        public static void Draw(Triangulation m_Delaunay)
+        /// <param name="m_Trapezoid"></param>
+        public  void Draw(List<LineSegment> lines)
         {
             m_lineMaterial.SetPass(0);
+            DrawEdges(lines);
 
             // call functions that are set to true
-            if (EdgesOn) DrawEdges(m_Delaunay);
+          //  if (EdgesOn) DrawEdges(m_map);
         }
     }
 }

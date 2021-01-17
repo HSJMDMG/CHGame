@@ -12,7 +12,7 @@ namespace CHGame
     using UnityEngine.SceneManagement;
     using UnityEngine.UI;
 
-    using System;
+
     using Util.Algorithms.DCEL;
     using Util.Algorithms.Triangulation;
     using Util.Geometry.DCEL;
@@ -32,7 +32,7 @@ namespace CHGame
         private List<P2Level> m_levels;
         protected int m_levelCounter = 0;
 
-
+        public Camera Cam;
 
         // names of differnt victory scenes
         public string m_p1Victory;
@@ -111,8 +111,7 @@ namespace CHGame
 
         private GameObject[] PlayerPolygonMeshCollection; // 2 empty gameobject to hold polygon meshs
         private GameObject[] LineMeshCollection; //2 empty gameobject to hold line meshs
-
-
+        private GameObject[] PlayerTrapezoidCollection; //2 empty gameobject to hold trapezoid decompositions
 
         private GameObject[] PlayerScoreText;
 
@@ -129,6 +128,8 @@ namespace CHGame
         // mapping of vertices to ownership enum
         private readonly Dictionary<Vector2, EOwnership> m_ownership = new Dictionary<Vector2, EOwnership>();
 
+        bool TrapezoidLocationMode;
+
         private enum EOwnership
         {
             UNOWNED,
@@ -141,6 +142,10 @@ namespace CHGame
         // Use this for initialization
         public void Start()
         {
+
+          //TODO:check TrapezoidLocationMode
+          TrapezoidLocationMode = false;
+
 
           m_points = new List<Vector2>();
             m_segments = new HashSet<LineSegment>();
@@ -155,7 +160,7 @@ namespace CHGame
             epsilon = 0.2f;
 
           //counter
-          m_maximumTurn = 30;
+          m_maximumTurn =  (int)Mathf.Round(Random.Range(10f, 50f));
           m_turnCounter = 0;
           player1Turn = true;
 
@@ -186,6 +191,9 @@ namespace CHGame
 
           PlayerPolygonMeshCollection = new GameObject[2] {GameObject.Find("Player1PolygonCollection"),GameObject.Find("Player2PolygonCollection")};
           LineMeshCollection = new GameObject[2] {GameObject.Find("Player1LineCollection"),GameObject.Find("Player2LineCollection")};
+          PlayerTrapezoidCollection = new GameObject[2] {GameObject.Find("Player1TrapezoidCollection"),GameObject.Find("Player2TrapezoidCollection")};
+
+
 
             //initialize score panel
             PlayerScoreText = new GameObject[2] {GameObject.Find("P1Score"), GameObject.Find("P2Score")};
@@ -200,15 +208,6 @@ namespace CHGame
 
         private void Update()
         {
-         /* Show Trapezoidal Decomposition
-          *
-          * if (Input.GetKeyDown("t"))
-            {
-                P2Drawer.EdgesOn = !P2Drawer.EdgesOn;
-            }
-            */
-
-
 
             if (!operated) {
 
@@ -247,18 +246,43 @@ namespace CHGame
 
                 // add polygon listener
                 // TODO: change m_hullSelection to Point Location on Trapezoidal Decomposition
-
                 if (Input.GetMouseButton(0))
                 {
-                    Vector2 pos = Input.mousePosition;
+                  Vector3 newPos = Cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Cam.nearClipPlane));
+                  Vector2 pos = new Vector2(newPos.x, newPos.y);
 
-                    //Debug.Log("Point Location for Polygon!!!");
-                    //Debug.Log(pos);
-                    //brute force
+                  Debug.Log("Mouse Click World Position: (" + newPos.x + "," + newPos.y + "," + newPos.z + ")");
+
+                  //TraperzoidLocationMode  = true;
+                  if (TrapezoidLocationMode) {
+                      //trapezoid mode
+                      //TODO: fix: face, face.owner
+
+                      //face = trapezoid.query(pos);
+                      //m_current_hull = PlayerPolygonObjects[playIndex][face.owner];
+
+
+                      if (m_selected_convexhulls.Contains(m_current_hull))
+                      {
+
+                          m_current_hull.GetComponent<P2Hull>().selected = false;
+                          m_selected_convexhulls.Remove(m_current_hull);
+                      }
+                      else
+                      {
+                          if (m_selected_convexhulls.Count < 2)
+                          {
+                              m_current_hull.GetComponent<P2Hull>().selected = true;
+                              m_selected_convexhulls.Add(m_current_hull);
+                          }
+                      }
+
+                  }
+                  else {
+                    //brute force mode
                     foreach (Polygon2D p in CanvasPlayerPolygons[playerIndex])
                     {
                         int i = CanvasPlayerPolygons[playerIndex].IndexOf(p);
-
                         if (p.Contains(pos))
                         {
                             m_current_hull = PlayerPolygonObjects[playerIndex][i];
@@ -282,23 +306,11 @@ namespace CHGame
                         }
 
                     }
-
+                  }
                 }
 
 
-
             }
-
-
-
-
-
-
-
-
-
-
-
         }
 
         public void InitLevel()
@@ -327,7 +339,7 @@ namespace CHGame
 
             m_points = m_levels[m_levelCounter].Points;
 
-            m_maximumTurn = 30;
+            m_maximumTurn =  (int)Mathf.Round(Random.Range(10f, 50f));
             m_turnCounter = 0;
             player1Turn = true;
 
@@ -341,11 +353,9 @@ namespace CHGame
 
             PlayerScore[0] = 0f;
             PlayerScore[1] = 0f;
-
-
-        //Make vertex list
-        //m_points = FindObjectsOfType<P2Point>().ToList();
-    }
+          //Make vertex list
+          //m_points = FindObjectsOfType<P2Point>().ToList();
+        }
 
 
         public Polygon2D PolygonOnCanvas(Polygon2D p) {
@@ -362,8 +372,18 @@ namespace CHGame
 
         public void ShowHideTrapezoidMap()
         {
-          // show/hide trapezoid map
-        //  P2Drawer.EdgesOn = !P2Drawer.EdgesOn;
+            // show/hide trapezoid map
+            if (PlayerTrapezoidCollection[playerIndex].activeSelf)
+            {
+              //hide
+              PlayerTrapezoidCollection[playerIndex].SetActive(false);
+            }
+            else
+            {
+              //show
+              PlayerTrapezoidCollection[playerIndex].SetActive(true);
+              DrawTrapezoidalDecomposition();
+            }
         }
 
 
@@ -432,15 +452,12 @@ namespace CHGame
 
 
             }
-
-
         }
 
         public void Connect()
         {
 
             // check validness (1) 2pts, (2) line segment not exist; (3) not crossed with existing segments (5) not intersecting existing polygon
-
 
             if (m_selected_points.Count < 2) return;
           var seg = new P2Segment(m_selected_points[0].Pos, m_selected_points[1].Pos, player1Turn);
@@ -464,7 +481,7 @@ namespace CHGame
             //If we want to find a largest circle, this is NP-hard problem(Hamilton Cycle)
 
 
-            //[option]TODO: show info about invalid selection
+
             operated = true;
 
           //add both vertices and segment to current player
@@ -489,7 +506,7 @@ namespace CHGame
 
 
 
-          //TODO: add new convex hull (if exist) to current player, draw convex hull, update score
+          // add new convex hull (if exist) to current player, draw convex hull, update score
 
           Polygon2D newpolygon = FindPolygon(playerIndex, seg.Segment.Point1);
 
@@ -535,26 +552,21 @@ namespace CHGame
             UpdateScore();
 
           }
-
+          UpdateTrapezoidalDecomposition();
         }
 
-        void UpdateScore()
-        {
-          PlayerScoreText[playerIndex].GetComponent<Text>().text = PlayerScore[playerIndex].ToString();
-          PlayerScoreText[1 - playerIndex].GetComponent<Text>().text = PlayerScore[1 - playerIndex].ToString();
-        }
 
         public void Merge()
         {
 
 
-          //TODO: check validness (1) 2 polygon, (2) mergechance > 1;
+          //check validness (1) 2 polygon, (2) mergechance > 1;
           if (m_selected_convexhulls.Count < 2) return;
           foreach (GameObject hullObject in m_selected_convexhulls) {
             if (!hullObject.GetComponent<P2Hull>().mergeChance) return;
           }
 
-            //TODO: compute new convex hull,  add new convex hull to current player, update score
+            //Compute new convex hull,  add new convex hull to current player, update score
 
           operated = true;
 
@@ -577,7 +589,7 @@ namespace CHGame
           }
 
 
-          //TODO: disable merges
+          //disable merges
           m_selected_convexhulls[0].GetComponent<P2Hull>().mergeChance = false;
           m_selected_convexhulls[1].GetComponent<P2Hull>().mergeChance = false;
 
@@ -598,8 +610,76 @@ namespace CHGame
           }
           UpdateScore();
 
+          UpdateTrapezoidalDecomposition();
+        }
+
+
+
+
+        void DrawTrapezoidalDecomposition(){
+
+              //var map =  TrapezoidalMap;
+              //var verticalLines = map.naiveMap(height, weight);
+              var VerticalLines = new List<LineSegment>();
+              VerticalLines.Add(new LineSegment((new Vector2(0,0)), (new Vector2(0,1)) ));
+              VerticalLines.Add(new LineSegment((new Vector2(1,0)), (new Vector2(1,1)) ));
+
+              GL.PushMatrix();
+
+              // Set transformation matrix for drawing to
+              // match our transform
+              GL.MultMatrix(transform.localToWorldMatrix);
+
+              P2Drawer drawer = new P2Drawer();
+              drawer.CreateLineMaterial();
+              drawer.Draw(VerticalLines);
+
+              GL.PopMatrix();
+
+
+
+
 
         }
+
+
+
+        void UpdateTrapezoidalDecomposition()
+        {
+            /*
+
+
+
+            //TODO: Update TrapezoidalDecompostion
+            //iterate PlayerPolygons[playerIndex], whose mergechance = true;
+            // take all segments out, inset into trapezoid decomposition
+
+            shapes = null;
+            foreach (Polygon2D polygon in PlayerPolygons[playerIndex]) {
+                for (LineSegment seg in polygon.Segments) {
+                   //Add seg
+                }
+            }
+            public TrapezoidalMap(HashSet<Shape> a_shapes) {
+              shapes = a_shapes;
+            }
+
+
+
+            // brute force check polygon/face relationships.
+            // print out trapezoid decomposition;
+              */
+        }
+
+
+
+
+        void UpdateScore()
+        {
+          PlayerScoreText[playerIndex].GetComponent<Text>().text = PlayerScore[playerIndex].ToString();
+          PlayerScoreText[1 - playerIndex].GetComponent<Text>().text = PlayerScore[1 - playerIndex].ToString();
+        }
+
 
         bool SegIntersectPolygon(P2Segment seg, int playerIndex) {
           foreach (Polygon2D p in PlayerPolygons[playerIndex]) {
