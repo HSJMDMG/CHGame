@@ -856,8 +856,9 @@ PrefabInstance:
         two castles or if he or she occupied two places, two places could be merged
         and a larger area could be occupied. Due to the cost, every area could be
         merge once and the new area cannot be merged and one wasteland cannot be
-        connected to an area for a larger area. After a certain round, the one with
-        the larger sum of areas won .
+        connected to an area for a larger area. Of course, he or she could do nothing
+        during the round. Just click "Next" and directly skip the round.  After certain
+        rounds, the one with the larger sum of areas won .
       objectReference: {fileID: 0}
     - target: {fileID: 22485368, guid: 5bf2b46499c5a4b9490e088a2b964638, type: 3}
       propertyPath: m_LocalPosition.x
