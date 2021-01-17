@@ -811,9 +811,9 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 11497240, guid: 47375d1ad9de78947b5dddba6bf6a125, type: 3}
       propertyPath: m_Text
-      value: "Project Name:       Convex Hull Game\n\nGroup 5:                  Yihan
-        Cheng, Tianchao Li, Ying Lu\n\nArt:                           Texture Class
-        Transparent Window, Royal UI\n    \nFont:                        Eaglelake,
+      value: "Project Name:         Convex Hull Game\n\nGroup 5:                 
+        Yihan Cheng, Tianchao Li, Ying Lu\n\nArt:                           Texture
+        Class Transparent Window, Royal UI\n    \nFont:                        Eaglelake,
         Arial"
       objectReference: {fileID: 0}
     - target: {fileID: 11497240, guid: 47375d1ad9de78947b5dddba6bf6a125, type: 3}
