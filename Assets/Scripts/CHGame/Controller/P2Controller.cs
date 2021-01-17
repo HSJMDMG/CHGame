@@ -155,7 +155,7 @@ namespace CHGame
             epsilon = 0.2f;
 
           //counter
-          m_maximumTurn = 30;
+          m_maximumTurn = (int)Math.Round(UnityEngine.Random.Range(10f,25f));
           m_turnCounter = 0;
           player1Turn = true;
 
@@ -327,7 +327,7 @@ namespace CHGame
 
             m_points = m_levels[m_levelCounter].Points;
 
-            m_maximumTurn = 30;
+            m_maximumTurn = (int)Math.Round(UnityEngine.Random.Range(10f, 25f));
             m_turnCounter = 0;
             player1Turn = true;
 
