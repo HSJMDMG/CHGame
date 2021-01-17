@@ -28,7 +28,7 @@ namespace Util.Geometry.Trapezoid
 
 
     //Do increamental construction, return built faces
-  	public List<TrapezoidFace> incrementalMap(int height, int width) {
+  	public List<TrapezoidFace> incrementalMap() {
             int i;
   		// Set<TrapezoidLine> trapezoidMap = new List<TrapezoidLine>();
   		List<TrapezoidFace> trapezoidFaces = new List<TrapezoidFace>();
@@ -64,7 +64,7 @@ namespace Util.Geometry.Trapezoid
 
   			TDPoint p = seg.getFirst();
   			TDPoint q = seg.getLast();
-            
+
 
   			if (intersectedFaces.Count == 1) {
   				//segment lies within 1 face, split this face;
@@ -426,7 +426,7 @@ namespace Util.Geometry.Trapezoid
   	}
 
   	private TDShape randomShape(List<TDShape> segments) {
-  		
+
   		int n = Random.Range(0, segments.Count - 1);
   		int i = 0;
   		foreach (TDShape seg in segments) {
@@ -446,7 +446,7 @@ namespace Util.Geometry.Trapezoid
   	 * primarily used for drawing the visual lines on the screen (as any time
   	 * savings are already negated when having to draw all objects anyway).
   	 */
-  	public List<TrapezoidLine> naiveMap(int height, int width) {
+  	public List<TrapezoidLine> naiveMap(float width, float height ) {
 
       //return all the vertical lines of trapezoid.
       //TODO:fix the boundary parameter;
@@ -457,54 +457,63 @@ namespace Util.Geometry.Trapezoid
   		TDShape border = new TDShape();
   		TDShape border2 = new TDShape();
 
-  		border.getPoints().Add(new TDPoint(0, 0));
-  		border.getPoints().Add(new TDPoint(width, 0));
+  		border.getPoints().Add(new TDPoint(-1f * height, 0));
+  		border.getPoints().Add(new TDPoint(height, 0));
 
-  		border2.getPoints().Add(new TDPoint(0, height));
-  		border2.getPoints().Add(new TDPoint(width, height));
+  		border2.getPoints().Add(new TDPoint(0, -1f * width));
+  		border2.getPoints().Add(new TDPoint(0, width));
 
   		shapes.Add(border);
   		shapes.Add(border2);
 
   		// Step through each shape
-  		for (int i = 0; i < shapes.Count - 1; i++) {
-            TDShape s = shapes[i];
-  			TDShape sh = shapes[i + 1];
-  			// Ignore the border shapes so their points do not appear as part of
+  		for (int i = 0; i < shapes.Count; i++) {
+            //TDShape s = shapes[i];
+  			//TDShape sh = shapes[i + 1];
+				TDShape sh = shapes[i];
+
+				// Ignore the border shapes so their points do not appear as part of
   			// the trapezoidal map
   			if (sh.equals(border) || sh.equals(border2))
   				continue;
-  			// Step through the points in the current shape
 
-        for (int pi = 0; pi < sh.getPoints().Count - 1; pi++) {
-          TDPoint p = sh.getPoints()[pi];
-          TDPoint pt =  sh.getPoints()[pi + 1];
+				// Step through the points in the current shape
+
+        for (int pi = 0; pi < sh.getPoints().Count; pi++) {
+          //TDPoint p = sh.getPoints()[pi];
+          TDPoint pt =  sh.getPoints()[pi];
 
   				// Generate two trapezoidal lines for each point (up and down)
   				TrapezoidLine t = new TrapezoidLine(pt, height + 1, true);
   				TrapezoidLine t2 = new TrapezoidLine(pt, height + 1, false);
 
+													bool tu = false;
+													bool t2u = false;
 
   				// Iterate over all shapes, intersecting the trapezoidal lines
   				// with each of the shapes
-  				for (int s2i = 0 ; s2i < shapes.Count - 1; s2i ++) {
-                    TDShape s2 = shapes[s2i];
-                    TDShape sh2 = shapes[s2i + 1];
+  				for (int s2i = 0 ; s2i < shapes.Count; s2i ++) {
+                    //TDShape s2 = shapes[s2i];
+                    TDShape sh2 = shapes[s2i];
 
 
   					// if(!sh.equals(sh2)) {
   					// If the intersection yields a positive difference that is
   					// smaller than the previous length, update t
+  					// down
   					if (t.getStart().y - sh2.intersect(t, height + 1) > 0) {
-  						t.setLength(Mathf.Min((int) (t.getStart().y - sh2
+
+  							t.setLength(Mathf.Min((t.getStart().y - sh2
   								.intersect(t, height + 1)), t.getLength()));
+									tu =true;
   					}
   					// if the intersection yields a negative difference that is
   					// absolutely smaller than the previous length, update t2
   					else if (t2.getStart().y - sh2.intersect(t2, height + 1) < 0) {
-  						t2.setLength(Mathf.Min((int) Mathf.Abs(t2.getStart().y
+  						t2.setLength(Mathf.Min(Mathf.Abs(t2.getStart().y
   								- sh2.intersect(t2, height + 1)), t2
   								.getLength()));
+									t2u =true;
   					}
   					// }
 
@@ -512,13 +521,19 @@ namespace Util.Geometry.Trapezoid
   				// If the lengths have been updated to a reasonable value, Add
   				// them
   				if (t.getLength() < height) {
-  					trapezoidMap.Add(t);
+
+						trapezoidMap.Add(t);
+
   				}
   				if (t2.getLength() < height) {
-  					trapezoidMap.Add(t2);
+
+						trapezoidMap.Add(t2);
+
   				}
   			}
   		}
+
+
 
   		// Remove the borders so they are not displayed
   		shapes.Remove(border);

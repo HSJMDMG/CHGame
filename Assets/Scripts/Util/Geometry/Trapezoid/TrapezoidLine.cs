@@ -11,7 +11,7 @@ namespace Util.Geometry.Trapezoid
 
   	private TDPoint start;
     private TDPoint end;
-  	private int length;
+  	private float length;
     private bool up;
 
   	public TrapezoidLine() {
@@ -19,7 +19,7 @@ namespace Util.Geometry.Trapezoid
   		start = new TDPoint();
       end = new TDPoint();
   	}
-  	public TrapezoidLine(TDPoint a_start, int a_length, bool a_up) {
+  	public TrapezoidLine(TDPoint a_start, float a_length, bool a_up) {
   		//super();
   		start = a_start;
   		length = a_length;
@@ -34,25 +34,25 @@ namespace Util.Geometry.Trapezoid
       up = (start.y - end.y > 0);
     }
 
-  	public TrapezoidLine(int x1, int y1, int x2, int y2) {
+  	public TrapezoidLine(float x1, float y1, float x2, float y2) {
       start = new TDPoint(x1,y1);
       end = new TDPoint(x2,y2);
       length = Mathf.Abs(y1 - y2);
       up = (y1 - y2 > 0);
     }
 
-  	public TrapezoidLine(int a_x, int a_y, int a_length, bool a_up) {
-  		
+  	public TrapezoidLine(float a_x, float a_y, float a_length, bool a_up) {
+
   		start = new TDPoint(a_x,a_y);
       end = new TDPoint(a_x,a_up ? a_y-a_length : a_y+a_length);
   		length = a_length;
       up = a_up;
   	}
 
-  	public int getLength() {
+  	public float getLength() {
   		return length;
   	}
-  	public void setLength(int a_length) {
+  	public void setLength(float a_length) {
   		length = a_length;
       end.y = up ? start.y-length : start.y+length;
   	}

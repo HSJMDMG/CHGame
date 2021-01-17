@@ -49,10 +49,10 @@ namespace Util.Geometry.Trapezoid
       if(contains(p)) return false;
 
       // Assume that p is within the proper x coords of the shape
-      int x1 = getFirst().x;
-      int x2 = getLast().x;
-      int y1 = getFirst().y;
-      int y2 = getLast().y;
+      float x1 = getFirst().x;
+      float x2 = getLast().x;
+      float y1 = getFirst().y;
+      float y2 = getLast().y;
       return (p.y < lineAprox(x1,y1,x2,y2,p.x));
 
     }
@@ -62,17 +62,17 @@ namespace Util.Geometry.Trapezoid
       if(contains(p)) return false;
 
       // Assume that p is within the proper x coords of the shape
-      int x1 = getFirst().x;
-      int x2 = getLast().x;
-      int y1 = getFirst().y;
-      int y2 = getLast().y;
+      float x1 = getFirst().x;
+      float x2 = getLast().x;
+      float y1 = getFirst().y;
+      float y2 = getLast().y;
       return (p.y > lineAprox(x1,y1,x2,y2,p.x));
 
     }
 
-    private float lineAprox(int x1, int y1, int x2, int y2, int x){
-  //    return (float)(((y2-y1)/(x2-x1))*(x - x1)+y1);
-      return (float)((float)(((float)(y2-y1)/(x2-x1))*(x-x1))+y1);
+    private float  lineAprox(float  x1, float  y1, float x2, float y2, float x){
+  //    return (float )(((y2-y1)/(x2-x1))*(x - x1)+y1);
+      return (((y2-y1)/(x2-x1))*(x-x1))+y1 ;
     }
 
     private bool consider(TDPoint a, TDPoint b, TDPoint c) {
@@ -83,24 +83,24 @@ namespace Util.Geometry.Trapezoid
       return points.Contains(pt);
     }
 
-    public int intersect(TDPoint pt) {
-      int x1 = getFirst().x;
-      int y1 = getFirst().y;
-      int x2 = getLast().x;
-      int y2 = getLast().y;
-      return (int)Mathf.Round(lineAprox(x1,y1,x2,y2,pt.x) );
+    public float  intersect(TDPoint pt) {
+      float  x1 = getFirst().x;
+      float  y1 = getFirst().y;
+      float  x2 = getLast().x;
+      float  y2 = getLast().y;
+      return Mathf.Round(lineAprox(x1,y1,x2,y2,pt.x) );
     }
 
     /* Intersect the given trapezoidal line with
      * all other lines in this shape. */
-    public float intersect(TrapezoidLine t,int max) {
-      float min = max;
+    public float  intersect(TrapezoidLine t,float  max) {
+      float  min = max;
 
       foreach (TDPoint pt in points) {
           if(points.IndexOf(pt) > 0){
             TDPoint prevpt = points[points.IndexOf(pt) - 1];
             if(consider(t.getStart(), pt, prevpt)) {
-              min = Mathf.Min(min,(float)(pt.y - prevpt.y)/(pt.x-prevpt.x)*(t.getStart().x-prevpt.x)+prevpt.y);
+              min = Mathf.Min(min,(float )(pt.y - prevpt.y)/(pt.x-prevpt.x)*(t.getStart().x-prevpt.x)+prevpt.y);
             }
           }
         }

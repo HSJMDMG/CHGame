@@ -735,6 +735,8 @@ MonoBehaviour:
   PlayerPolygonMeshPrefab:
   - {fileID: 5688100764436606091, guid: 8cc03c638e33b4beba19ca84e6bcf018, type: 3}
   - {fileID: 8724647729403390828, guid: dbb7903b4313949b8b8f885c50ef8a54, type: 3}
+  TrapezoidLinePrefab: {fileID: 8139912144618445995, guid: 3152652c313454f6bbb206cf9a573593,
+    type: 3}
   m_points: []
   m_canvas_points: []
   m_selected_points: []

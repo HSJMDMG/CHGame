@@ -36,7 +36,7 @@ namespace Util.Geometry.Trapezoid {
       for(int i = 1; i<d; i++) {
         s = s + " ";
       }
-      Debug.Log(s + n.print());
+      //Debug.Log(s + n.print());
 
       if (n.leftNode != null) preorderTraverseTree(n.leftNode);
       if (n.rightNode != null) preorderTraverseTree(n.rightNode);
@@ -49,7 +49,7 @@ namespace Util.Geometry.Trapezoid {
   	    for(int i = 1; i<d; i++) {
   	      s = s + " ";
   	    }
-  	    Debug.Log(s + n.print());
+  	    //Debug.Log(s + n.print());
   	    if (n.rightNode != null) inorderTraverseTree(n.rightNode);
     }
 
@@ -61,17 +61,17 @@ namespace Util.Geometry.Trapezoid {
   	    for(int i = 1; i<d; i++) {
   	      s = s + " ";
   	    }
-  	    Debug.Log(s + n.print());
+  	    //Debug.Log(s + n.print());
       }
 
     public void traverseTree() {
-  	  Debug.Log("Preordered Nodes:");
+  	  //Debug.Log("Preordered Nodes:");
       preorderTraverseTree(root);
-       Debug.Log("Inordered Nodes:");
+       //Debug.Log("Inordered Nodes:");
       inorderTraverseTree(root);
-       Debug.Log("Postordered Nodes:");
+       //Debug.Log("Postordered Nodes:");
       postorderTraverseTree(root);
-       Debug.Log("Search Tree Output Complete");
+       //Debug.Log("Search Tree Output Complete");
 
      }
 
@@ -88,18 +88,18 @@ namespace Util.Geometry.Trapezoid {
 
     public TDNode retrieveNode(TDPoint p) {
 
-  	  Debug.Log("Retrieving p=("+p.x+","+p.y+")");
+  	  //Debug.Log("Retrieving p=("+p.x+","+p.y+")");
 
       TDNode nextNode = root;
       int steps = 0;
       String s = "";
       while(nextNode.getType() != TDNode.LEAF) {
-        Debug.Log( s+nextNode.print());
+        //Debug.Log( s+nextNode.print());
         nextNode = nextNode.getNext(p);
         steps++;
         s=s+" ";
       }
-      Debug.Log("Steps: "+steps);
+      //Debug.Log("Steps: "+steps);
       return nextNode;
     }
 

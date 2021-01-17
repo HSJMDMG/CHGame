@@ -109,7 +109,7 @@ namespace Util.Geometry.Trapezoid
     }
 
 
-    public void draw(Graphics g, int width, int height) {
+    public void draw(Graphics g, float width, float height) {
 
       // Point classification:
      	//1. Leftp is in top, rightp is in bottom
@@ -124,7 +124,7 @@ namespace Util.Geometry.Trapezoid
       // * 10.Leftp is in bottom, rightp is in bottom
 
 
-      TDPoint l = new TDPoint(0,0);
+      TDPoint l = new TDPoint(0f,0f);
       TDPoint r = new TDPoint(width,height);
 
       if(leftp!=null) {
@@ -138,8 +138,8 @@ namespace Util.Geometry.Trapezoid
       }
 
       if(l.x > r.x) {
-      	int tx = l.x;
-      	int ty = l.y;
+      	float tx = l.x;
+      	float ty = l.y;
       	l.x = r.x;
       	l.y = r.y;
       	r.x = tx;
@@ -176,7 +176,7 @@ namespace Util.Geometry.Trapezoid
           g.drawLine(r.x,r.y,r.x,height);
 
         }
-        */       
+        */
     }
 
     private bool isEmpty() {

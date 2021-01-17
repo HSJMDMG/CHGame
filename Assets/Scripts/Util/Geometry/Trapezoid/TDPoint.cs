@@ -10,14 +10,14 @@ namespace Util.Geometry.Trapezoid
 
 	public class TDPoint {
 
-		public int x;
-		public int y;
+		public float x;
+		public float y;
 
 		public TDPoint() {
-			x = 0;
-			y = 0;
+			x = 0f;
+			y = 0f;
 		}
-		public TDPoint(int _x, int _y) {
+		public TDPoint(float _x, float _y) {
 			x = _x;
 			y = _y;
 		}

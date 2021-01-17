@@ -5,6 +5,7 @@ namespace CHGame
     using System.Collections.Generic;
     using System.Linq;
     using UnityEngine;
+    using Util.Geometry.Trapezoid;
     using Util.Geometry.Polygon;
     using Util.Algorithms.Polygon;
     using Util.Geometry;
@@ -60,6 +61,7 @@ namespace CHGame
         public  GameObject PointPrefab;
         public List<GameObject> PlayerLineMeshesPrefab; // drag and drop 2 prefabs
         public List<GameObject> PlayerPolygonMeshPrefab; //drag and drop 2 prefabs
+        public GameObject TrapezoidLinePrefab;
 
         //TODO: UPDATE m-points, m-segments;
         [SerializeField]
@@ -251,7 +253,7 @@ namespace CHGame
                   Vector3 newPos = Cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Cam.nearClipPlane));
                   Vector2 pos = new Vector2(newPos.x, newPos.y);
 
-                  Debug.Log("Mouse Click World Position: (" + newPos.x + "," + newPos.y + "," + newPos.z + ")");
+                  //Debug.Log("Mouse Click World Position: (" + newPos.x + "," + newPos.y + "," + newPos.z + ")");
 
                   //TraperzoidLocationMode  = true;
                   if (TrapezoidLocationMode) {
@@ -620,10 +622,74 @@ namespace CHGame
 
               //var map =  TrapezoidalMap;
               //var verticalLines = map.naiveMap(height, weight);
+              //
+              GameObject parent = PlayerTrapezoidCollection[playerIndex];
+              while (parent.transform.childCount > 0) {
+                DestroyImmediate(parent.transform.GetChild(0).gameObject);
+              }
+
+
+              //TDShape newShape = new Shape(listCopy);
+
+
+
+
               var VerticalLines = new List<LineSegment>();
               VerticalLines.Add(new LineSegment((new Vector2(0,0)), (new Vector2(0,1)) ));
               VerticalLines.Add(new LineSegment((new Vector2(1,0)), (new Vector2(1,1)) ));
 
+
+              //prepare inserted line segments (shapes) for trapezoidal decomposition
+              int index = 0;
+              List<TDShape> shapes = new List<TDShape>();
+              foreach (Polygon2D polygon in PlayerPolygons[playerIndex]) {
+                  foreach (LineSegment seg in polygon.Segments) {
+                    var smallshape = new List<TDPoint>();
+                    smallshape.Add(new TDPoint(seg.Point1.x, seg.Point1.y));
+                    smallshape.Add(new TDPoint(seg.Point2.x, seg.Point2.y));
+
+                    TDShape newShape = new TDShape(smallshape);
+                    newShape.index = index++;
+                    shapes.Add(newShape);
+                  }
+              }
+
+              Debug.Log(shapes.Count);
+              //Incremental construction
+              TrapezoidalMap Map = new TrapezoidalMap(shapes);
+              Map.incrementalMap();
+              var tlines = Map.naiveMap(10f, 10f);
+
+              Debug.Log(tlines.Count);
+              foreach (var line in tlines) {
+                var tp1= line.getStart();
+                var tp2= line.getEnd();
+                Vector2 p1 = new Vector2(tp1.x, tp1.y);
+                Vector2 p2 = new Vector2(tp2.x, tp2.y);
+                VerticalLines.Add(new LineSegment(p1, p2));
+              }
+
+
+              //draw lines;
+              foreach (var seg in VerticalLines){
+                //draw line segment,
+                var mesh = Instantiate(TrapezoidLinePrefab, Vector3.forward, Quaternion.identity) as GameObject;
+
+                mesh.transform.parent = parent.transform;
+                //mesh.GetComponent<P2Segment>(seg.Point1, seg.Point2, player1Turn);
+
+                instantObjects.Add(mesh);
+                //Trapezoid1[playerIndex].Add(mesh);
+                var meshScript = mesh.GetComponent<ReshapingMesh>();
+                meshScript.CreateNewMesh(seg.Point1, seg.Point2);
+
+              }
+
+
+
+
+
+              /*  not working
               GL.PushMatrix();
 
               // Set transformation matrix for drawing to
@@ -635,6 +701,7 @@ namespace CHGame
               drawer.Draw(VerticalLines);
 
               GL.PopMatrix();
+              */
 
 
 
