@@ -811,19 +811,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 11497240, guid: 47375d1ad9de78947b5dddba6bf6a125, type: 3}
       propertyPath: m_Text
-      value: 'Project Name:       Convex Hull Game
-
-
-        Group 5:                 
-        Yihan Cheng, Tianchao Li, Ying Lu
-
-
-        Art:                          
-        Texture Class Transparent Window, Royal UI,
-
-
-        Font:                       
-        Eaglelake'
+      value: "Project Name:       Convex Hull Game\n\nGroup 5:                  Yihan
+        Cheng, Tianchao Li, Ying Lu\n\nArt:                           Texture Class
+        Transparent Window, Royal UI\n    \nFont:                        Eaglelake,
+        Arial"
       objectReference: {fileID: 0}
     - target: {fileID: 11497240, guid: 47375d1ad9de78947b5dddba6bf6a125, type: 3}
       propertyPath: m_FontData.m_VerticalOverflow
@@ -848,6 +839,18 @@ PrefabInstance:
     - target: {fileID: 11497240, guid: 47375d1ad9de78947b5dddba6bf6a125, type: 3}
       propertyPath: m_FontData.m_MaxSize
       value: 82
+      objectReference: {fileID: 0}
+    - target: {fileID: 22454554, guid: 47375d1ad9de78947b5dddba6bf6a125, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22454554, guid: 47375d1ad9de78947b5dddba6bf6a125, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -199
+      objectReference: {fileID: 0}
+    - target: {fileID: 22454554, guid: 47375d1ad9de78947b5dddba6bf6a125, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 358
       objectReference: {fileID: 0}
     - target: {fileID: 22485368, guid: 47375d1ad9de78947b5dddba6bf6a125, type: 3}
       propertyPath: m_LocalPosition.x
