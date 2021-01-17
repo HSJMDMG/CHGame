@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8139912144618445996}
   - component: {fileID: 463585816343442694}
   m_Layer: 0
-  m_Name: P1LineMesh
+  m_Name: TrapezoidMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e85ba5586661c4d3a8fe868f1e91b6d5, type: 2}
+  - {fileID: 2100000, guid: a8c3b4e0eb6eb9443b0671b0f4735d76, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -635,9 +635,7 @@ namespace CHGame
 
 
               var VerticalLines = new List<LineSegment>();
-              VerticalLines.Add(new LineSegment((new Vector2(0,0)), (new Vector2(0,1)) ));
-              VerticalLines.Add(new LineSegment((new Vector2(1,0)), (new Vector2(1,1)) ));
-
+            
 
               //prepare inserted line segments (shapes) for trapezoidal decomposition
               int index = 0;
