@@ -98,8 +98,8 @@ MonoBehaviour:
   MeshR: {fileID: 8724647729403390830}
   selected: 0
   belongToPlayer1: 0
-  selectedMaterial: {fileID: 2100000, guid: 33e9fe11381b58a4a9c4c7ed2014fe65, type: 2}
-  originalMaterial: {fileID: 2100000, guid: 611eaec2adf16564eba474be5cb51313, type: 2}
+  selectedMaterial: {fileID: 2100000, guid: 211b6e31e399b844d852183dbc59beea, type: 2}
+  originalMaterial: {fileID: 2100000, guid: 9bf0935cc32b79741b09c804877c5d8f, type: 2}
 --- !u!64 &-5752702079936511141
 MeshCollider:
   m_ObjectHideFlags: 0

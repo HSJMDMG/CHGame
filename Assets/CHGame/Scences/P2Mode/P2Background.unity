@@ -845,7 +845,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11497240, guid: 5bf2b46499c5a4b9490e088a2b964638, type: 3}
       propertyPath: m_Text
-      value: This is the background texts for 2-Player Mode
+      value: 'After several years, the Queen of Lissandra and her remaining troops
+        discovered this mainland. And she decided to build her new kingdom here.
+        Two dominators Swain and Lissandra started a new competition for land. They
+        built castles on the land and tried to ues these to domainate the surrounded
+        land . '
       objectReference: {fileID: 0}
     - target: {fileID: 22485368, guid: 5bf2b46499c5a4b9490e088a2b964638, type: 3}
       propertyPath: m_LocalPosition.x
