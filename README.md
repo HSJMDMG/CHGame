@@ -6,7 +6,12 @@ This is the final project of Group 16 for 2IMA15 Geometric algorithms, developed
 
 ## How to play 
 
-Here is a demo video. 
+Here is a demo video.
+
+https://youtu.be/GqbcDBgz_dc
+
+Or
+https://www.bilibili.com/video/BV1yi4y1P7H2/
 
 ### 1-Player mode
 
